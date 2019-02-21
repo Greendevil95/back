@@ -7,21 +7,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/")
 public class UsersController {
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
 
 
     @PostMapping("/registration")
     public ResponseEntity registration(@RequestBody User user) {
-        userService.insertUser(user);
-        //userService.insertUser(user);
-        String str = "Registration successful!";
-        return ResponseEntity.ok(str);
+        return userService.insertUser(user);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable(value = "id") Long Id) {
@@ -31,9 +29,7 @@ public class UsersController {
 
     @PutMapping("/refreshInfo")
     public ResponseEntity refreshInfo(@RequestBody User user) {
-        userService.refreshUser(user);
-        String str = "Your data was refreshing!";
-        return ResponseEntity.ok(str);
+        return userService.refreshUser(user);
     }
 
 }

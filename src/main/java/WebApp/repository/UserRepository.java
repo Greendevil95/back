@@ -8,7 +8,7 @@ import java.util.Optional;
 
 
 public interface UserRepository extends CrudRepository<User,Long> {
-    //List<User> findByEmail(String email);
+    List<User> findAllByEmail(String email);
     List<User> findByLogin(String login);
     void deleteById(Long id);
     User findById(Integer id);
