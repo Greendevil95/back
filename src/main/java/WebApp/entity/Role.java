@@ -1,5 +1,6 @@
 package WebApp.entity;
 
 public enum Role {
-    USER;
+    USER,
+    ADMIN;
 }
