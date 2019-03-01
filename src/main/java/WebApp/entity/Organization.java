@@ -5,7 +5,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "organization")
-public class Organizations {
+public class Organization {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,19 +24,19 @@ public class Organizations {
     @Column(name = "description")
     private  String description;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false,fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    private User organizerId;
+    private User userId;
 
-    public Organizations() {
+    public Organization() {
     }
 
-    public Organizations(String name, String address, String phoneNumber, String description, User organizerId) {
+    public Organization(String name, String address, String phoneNumber, String description, User organizerId) {
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.description = description;
-        this.organizerId = organizerId;
+        this.userId = organizerId;
     }
 
     public Long getId() {
@@ -59,8 +59,8 @@ public class Organizations {
         return description;
     }
 
-    public User getOrganizerId() {
-        return organizerId;
+    public User getUserId() {
+        return userId;
     }
 
     public void setId(Long id) {
@@ -83,7 +83,7 @@ public class Organizations {
         this.description = description;
     }
 
-    public void setOrganizerId(User organizerId) {
-        this.organizerId = organizerId;
+    public void setUserId(User userId) {
+        this.userId = userId;
     }
 }
