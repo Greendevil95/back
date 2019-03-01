@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/")
-public class UsersController {
+public class RegistationController {
 
     @Autowired
     private UserService userService;
@@ -17,15 +17,18 @@ public class UsersController {
 
     @PostMapping("/registration")
     public ResponseEntity registration(@RequestBody User user) {
-        return userService.insertUser(user);
+        return userService.addUser(user);
     }
 
+    @DeleteMapping("/delete")
+    public ResponseEntity deleteUser(@RequestBody User user){
+        return userService.deleteUser(user);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable(value = "id") Long Id) {
         return userService.getUserById(Id);
     }
-
 
     @PutMapping("/refreshInfo")
     public ResponseEntity refreshInfo(@RequestBody User user) {
