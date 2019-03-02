@@ -1,6 +1,8 @@
 package WebApp.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -24,19 +26,20 @@ public class Organization {
     @Column(name = "description")
     private  String description;
 
-    @ManyToOne(optional = false,fetch = FetchType.EAGER)
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
 
     public Organization() {
     }
 
-    public Organization(String name, String address, String phoneNumber, String description, User organizerId) {
+    public Organization(String name, String address, String phoneNumber, String description, User user) {
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.description = description;
-        this.userId = organizerId;
+        this.user = user;
     }
 
     public Long getId() {
@@ -59,8 +62,8 @@ public class Organization {
         return description;
     }
 
-    public User getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
     public void setId(Long id) {
@@ -83,7 +86,7 @@ public class Organization {
         this.description = description;
     }
 
-    public void setUserId(User userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 }
