@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/main")
+@RequestMapping
 public class MainController {
 
     @Autowired
@@ -15,14 +15,7 @@ public class MainController {
 
     @GetMapping("")
     public ResponseEntity<Iterable<User>> greeeting() {
-        return userService.getAllUser();
+        return userService.getAllUsers();
     }
 
-
-
-// for test
-    @PostMapping(value = "/{password}/{email}")
-    public void addUser(@PathVariable("password") String password, @PathVariable("email") String email  ){
-        userService.save(new User(password,email));
-    }
 }

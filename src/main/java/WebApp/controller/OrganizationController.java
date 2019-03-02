@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/{userId}/organization")
+@RequestMapping("/organization")
 public class OrganizationController {
 
     @Autowired
@@ -17,15 +17,6 @@ public class OrganizationController {
     @Autowired
     UserService userService;
 
-//    @GetMapping
-//    public ResponseEntity allUser(){
-//        return userService.getAllUser();
-//    }
 
-
-    @PostMapping
-    public ResponseEntity addOrganization(@PathVariable(value = "userId") Long userId, @RequestBody Organization organization){
-        return organizatioService.addOrganization(userId,organization);
-    }
 
 }
