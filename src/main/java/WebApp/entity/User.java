@@ -3,6 +3,7 @@ package WebApp.entity;
 
 import javax.persistence.*;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -23,8 +24,8 @@ public class User {
     @Column(name = "verify",nullable = false)
     private Boolean verify;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private Set<Organization> organization;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private List<Organization> organization;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role",joinColumns = @JoinColumn(name = "user_id"))
@@ -35,7 +36,7 @@ public class User {
     public User() {
     }
 
-    public User(String email, String password, Boolean verify, Set<Organization> organization, Set<Role> roles) {
+    public User(String email, String password, Boolean verify, List<Organization> organization, Set<Role> roles) {
         this.email = email;
         this.password = password;
         this.verify = verify;
@@ -48,7 +49,7 @@ public class User {
         this.password = password;
         this.verify = false;
         this.organization = null;
-        this.roles=Collections.singleton(Role.USER);
+        this.roles = Collections.singleton(Role.USER);;
     }
 
     public Long getId() {
@@ -67,7 +68,7 @@ public class User {
         return verify;
     }
 
-    public Set<Organization> getOrganization() {
+    public List<Organization> getOrganization() {
         return organization;
     }
 
@@ -91,16 +92,11 @@ public class User {
         this.verify = verify;
     }
 
-    public void setOrganization(Set<Organization> organization) {
+    public void setOrganization(List<Organization> organization) {
         this.organization = organization;
     }
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
-
-    public void addOrganization(Organization organization){
-        this.organization.add(organization);
-    }
-
 }
