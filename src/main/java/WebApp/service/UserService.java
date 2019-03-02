@@ -11,6 +11,7 @@ public interface UserService {
     ResponseEntity<User> getUserById(Long Id);
     ResponseEntity refreshUser(User user);
     ResponseEntity deleteUser(User user);
-    ResponseEntity<Iterable<User>> getAllUser();
+    ResponseEntity deleteUserById(Long Id);
+    ResponseEntity<Iterable<User>> getAllUsers();
     void save(User user);
 }

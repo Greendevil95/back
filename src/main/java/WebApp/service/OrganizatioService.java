@@ -6,5 +6,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface OrganizatioService {
-    ResponseEntity addOrganization(Long userId, Organization organization);
+    ResponseEntity addOrganization(Long id, Organization organization);
 }

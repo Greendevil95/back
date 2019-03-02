@@ -57,7 +57,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<Iterable<User>> getAllUser() {
+    public ResponseEntity deleteUserById(Long Id) {
+        if(userRepository.findById(Id).isPresent()){
+            userRepository.deleteById(Id);
+            return ResponseEntity.ok("User with Id " + Id + " was delete.");
+        }
+        else return ResponseEntity.notFound().build();
+    }
+
+    @Override
+    public ResponseEntity<Iterable<User>> getAllUsers() {
         return ResponseEntity.ok(userRepository.findAll());
     }
 
