@@ -18,39 +18,44 @@ public class UserController {
     @Autowired
     OrganizatioService organizatioService;
 
-    @PostMapping
-    public ResponseEntity registration(@RequestBody User user) {
-        return userService.addUser(user);
-    }
-
-    @DeleteMapping
-    public ResponseEntity deleteUser(@RequestBody User user){
-        return userService.deleteUser(user);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteUserById(@PathVariable(value = "id") Long id){
-        return userService.deleteUserById(id);
-    }
-
     @GetMapping("")
     public ResponseEntity<Iterable<User>> getAllUsers() {
-        return userService.getAllUsers();
+        return userService.getAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable(value = "id") Long Id) {
-        return userService.getUserById(Id);
+        return userService.getById(Id);
     }
 
-    @PutMapping
-    public ResponseEntity refreshInfo(@RequestBody User user) {
-        return userService.refreshUser(user);
+    @PostMapping
+    public ResponseEntity addUser(@RequestBody User user) {
+        return userService.add(user);
     }
 
     @PostMapping("/{id}")
     public ResponseEntity addOrganization(@PathVariable(value = "id") Long id, @RequestBody Organization organization ){
-        return organizatioService.addOrganization(id,organization);
+        return organizatioService.add(id,organization);
+    }
+
+    @PutMapping
+    public ResponseEntity updateUser(@RequestBody User user) {
+        return userService.update(user);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity updateUserById(@PathVariable(value = "id") Long id, @RequestBody User user){
+        return userService.updateById(id,user);
+    }
+
+    @DeleteMapping
+    public ResponseEntity deleteUser(@RequestBody User user){
+        return userService.delete(user);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteUserById(@PathVariable(value = "id") Long id){
+        return userService.deleteById(id);
     }
 
 }

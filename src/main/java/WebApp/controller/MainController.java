@@ -15,7 +15,7 @@ public class MainController {
 
     @GetMapping("")
     public ResponseEntity<Iterable<User>> greeeting() {
-        return userService.getAllUsers();
+        return userService.getAll();
     }
 
 }
