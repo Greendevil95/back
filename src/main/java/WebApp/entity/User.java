@@ -1,6 +1,8 @@
 package WebApp.entity;
 
 
+import org.springframework.context.annotation.Lazy;
+
 import javax.persistence.*;
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +33,6 @@ public class User {
     @CollectionTable(name = "user_role",joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
-
 
     public User() {
     }
