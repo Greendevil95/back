@@ -16,31 +16,46 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+
     @Override
-    public ResponseEntity addUser(User user) {
+    public ResponseEntity add(User user) {
         if (!userRepository.findByEmail(user.getEmail()).isPresent()) {
             hashPass(user);
             userRepository.save(user);
-            return ResponseEntity.ok("Registration successful!");
+            return ResponseEntity.ok("Registration user with email " + user.getEmail() + " successful!");
         } else {
             return ResponseEntity.badRequest().body("User with this email: " + user.getEmail()+ " already exists!");
         }
     }
 
     @Override
-    public ResponseEntity<User> getUserById(Long id) {
+    public ResponseEntity<User> getById(Long id) {
         if (userRepository.findById(id).isPresent()) {
             User user = userRepository.findById(id).get();
             return ResponseEntity.ok(user);
         } else return ResponseEntity.notFound().build();
     }
 
+    @Override
+    public ResponseEntity<Iterable<User>> getAll() {
+        return ResponseEntity.ok(userRepository.findAll());
+    }
 
     @Override
-    public ResponseEntity refreshUser(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            User refreshingUser = userRepository.findByEmail(user.getEmail()).get();
-            user.setId(refreshingUser.getId());
+    public ResponseEntity update(User user) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()){
+            User updateUser = userRepository.findByEmail(user.getEmail()).get();
+            user.setId(updateUser.getId());
+            hashPass(user);
+            userRepository.save(user);
+            return ResponseEntity.ok("Data for user with email " + user.getEmail() + " was refreshing!");
+        } else return ResponseEntity.notFound().build();
+    }
+
+    @Override
+    public ResponseEntity updateById(Long id, User user) {
+        if (userRepository.findById(id).isPresent()) {
+            user.setId(id);
             hashPass(user);
             userRepository.save(user);
             return ResponseEntity.ok("Your data was refreshing!");
@@ -48,7 +63,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity deleteUser(User user){
+    public ResponseEntity delete(User user){
         if(userRepository.findByEmail(user.getEmail()).isPresent()){
             userRepository.deleteByEmail(user.getEmail());
             return ResponseEntity.ok("User with email "+ user.getEmail() + " was delete.");
@@ -57,22 +72,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity deleteUserById(Long Id) {
-        if(userRepository.findById(Id).isPresent()){
-            userRepository.deleteById(Id);
-            return ResponseEntity.ok("User with Id " + Id + " was delete.");
+    public ResponseEntity deleteById(Long id) {
+        if(userRepository.findById(id).isPresent()){
+            userRepository.deleteById(id);
+            return ResponseEntity.ok("User with Id " + id + " was delete.");
         }
         else return ResponseEntity.notFound().build();
-    }
-
-    @Override
-    public ResponseEntity<Iterable<User>> getAllUsers() {
-        return ResponseEntity.ok(userRepository.findAll());
-    }
-
-    @Override
-    public void save(User user) {
-        userRepository.save(user);
     }
 
     private void hashPass(User user){
