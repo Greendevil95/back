@@ -1,8 +1,5 @@
 package WebApp.entity;
 
-
-import org.springframework.context.annotation.Lazy;
-
 import javax.persistence.*;
 import java.util.Collections;
 import java.util.List;
@@ -10,12 +7,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "usr")
-public class User {
-
-    @Id
-    @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+public class User extends  AbstractEntity {
 
     @Column(name = "email")
     private String email;
@@ -53,10 +45,6 @@ public class User {
         this.roles = Collections.singleton(Role.USER);;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -75,10 +63,6 @@ public class User {
 
     public Set<Role> getRoles() {
         return roles;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public void setEmail(String email) {
