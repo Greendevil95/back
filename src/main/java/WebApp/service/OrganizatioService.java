@@ -8,24 +8,8 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public interface OrganizatioService {
+public interface OrganizatioService extends CommonService<Organization> {
 
     ResponseEntity add(Long id, Organization organization);
-
-
-    ResponseEntity<Iterable<Organization>> getAll();
-
     ResponseEntity<Optional<Organization>> getAllForUser(User user);
-
-    ResponseEntity<Organization> getById(Long id);
-
-
-    ResponseEntity updateById(Long id, Organization organization);
-
-    ResponseEntity update(Organization organization);
-
-
-    ResponseEntity deleteById(Long id);
-
-    ResponseEntity delete(Organization organization);
 }

@@ -11,7 +11,11 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class OrganizationServiceImpl implements OrganizatioService {
+public class OrganizationServiceImpl extends AbstractService<Organization, OrganizationRepository> implements OrganizatioService {
+
+    public OrganizationServiceImpl(OrganizationRepository repository) {
+        super(repository);
+    }
 
     @Autowired
     private UserRepository userRepository;
