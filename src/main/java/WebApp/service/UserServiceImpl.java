@@ -1,6 +1,6 @@
 package WebApp.service;
 
-
+import WebApp.entity.Role;
 import WebApp.entity.User;
 import WebApp.repository.UserRepository;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -8,19 +8,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends AbstractService<User, UserRepository> implements UserService  {
 
+    public UserServiceImpl(UserRepository repository) {
+        super(repository);
+    }
 
     @Autowired
     private UserRepository userRepository;
-
 
     @Override
     public ResponseEntity add(User user) {
         if (!userRepository.findByEmail(user.getEmail()).isPresent()) {
             hashPass(user);
+            user.setRoles(Collections.singleton(Role.USER));
             userRepository.save(user);
             return ResponseEntity.ok("Registration user with email " + user.getEmail() + " successful!");
         } else {
