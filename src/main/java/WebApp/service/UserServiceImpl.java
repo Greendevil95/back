@@ -3,16 +3,12 @@ package WebApp.service;
 import WebApp.entity.Role;
 import WebApp.entity.User;
 import WebApp.repository.UserRepository;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-
 
 @Service
 public class UserServiceImpl extends AbstractService<User, UserRepository> implements UserService  {
@@ -35,19 +31,6 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         } else {
             return ResponseEntity.badRequest().body("User with this email: " + user.getEmail()+ " already exists!");
         }
-    }
-
-    @Override
-    public ResponseEntity<User> getById(Long id) {
-        if (userRepository.findById(id).isPresent()) {
-            User user = userRepository.findById(id).get();
-            return ResponseEntity.ok(user);
-        } else return ResponseEntity.notFound().build();
-    }
-
-    @Override
-    public ResponseEntity<Iterable<User>> getAll() {
-        return ResponseEntity.ok(userRepository.findAll());
     }
 
     @Override
@@ -76,15 +59,6 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         if(userRepository.findByEmail(user.getEmail()).isPresent()){
             userRepository.deleteByEmail(user.getEmail());
             return ResponseEntity.ok("User with email "+ user.getEmail() + " was delete.");
-        }
-        else return ResponseEntity.notFound().build();
-    }
-
-    @Override
-    public ResponseEntity deleteById(Long id) {
-        if(userRepository.findById(id).isPresent()){
-            userRepository.deleteById(id);
-            return ResponseEntity.ok("User with Id " + id + " was delete.");
         }
         else return ResponseEntity.notFound().build();
     }
