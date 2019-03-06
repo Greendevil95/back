@@ -7,4 +7,5 @@ public interface UserRepository extends CommonRepository<User> {
     void deleteById(Long id);
     Optional<User> findByEmail(String email);
     void deleteByEmail(String email);
+
 }
