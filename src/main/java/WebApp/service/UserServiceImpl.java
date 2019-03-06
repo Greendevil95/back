@@ -6,6 +6,9 @@ import WebApp.repository.UserRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -20,6 +23,7 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
 
     @Autowired
     private UserRepository userRepository;
+
 
     @Override
     public ResponseEntity add(User user) {
@@ -86,9 +90,9 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     }
 
     private void hashPass(User user){
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         String pass = user.getPassword();
-        String md5pass = DigestUtils.md5Hex(pass);
-        user.setPassword(md5pass);
+        user.setPassword(bCryptPasswordEncoder.encode(pass));
     }
 
 }

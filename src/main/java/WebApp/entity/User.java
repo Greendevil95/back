@@ -7,12 +7,12 @@ import java.util.Set;
 
 @Entity
 @Table(name = "usr")
-public class User extends  AbstractEntity {
+public class User extends  AbstractEntity  {
 
     @Column(name = "email")
     private String email;
 
-    @Column(name = "password", nullable = true, length = 50)
+    @Column(name = "password", nullable = true)
     private String password;
 
     @Column(name = "verify",nullable = false)
@@ -26,7 +26,7 @@ public class User extends  AbstractEntity {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-    public User() {
+    public User()  {
     }
 
     public User(String email, String password, Boolean verify, List<Organization> organization, Set<Role> roles) {

@@ -17,10 +17,6 @@ public class UserController extends AbstractController<User,UserServiceImpl> {
         super(service);
     }
 
-
-
-
-
     @Autowired
     private UserService userService;
 
