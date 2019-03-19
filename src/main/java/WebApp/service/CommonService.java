@@ -16,4 +16,6 @@ public interface CommonService<E extends AbstractEntity> {
     ResponseEntity delete(E entity);
 
     ResponseEntity deleteById(Long Id);
+
+   // ResponseEntity add(E entity);
 }

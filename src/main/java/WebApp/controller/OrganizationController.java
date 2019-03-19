@@ -16,10 +16,4 @@ public class OrganizationController extends AbstractController<Organization,Orga
         super(service);
     }
 
-    @Autowired
-    OrganizatioService organizatioService;
-
-    @Autowired
-    UserService userService;
-
 }

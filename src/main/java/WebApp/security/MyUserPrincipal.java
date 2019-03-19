@@ -1,4 +1,4 @@
-package WebApp.entity;
+package WebApp.security;
 
 import WebApp.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;

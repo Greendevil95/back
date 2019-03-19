@@ -14,6 +14,8 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
         this.repository = repository;
     }
 
+
+
     public ResponseEntity<E> getById(Long id) {
         if (repository.findById(id).isPresent()) {
             E entity = repository.findById(id).get();
