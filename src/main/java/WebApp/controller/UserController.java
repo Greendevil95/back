@@ -1,13 +1,14 @@
 package WebApp.controller;
 
-import WebApp.entity.Organization;
 import WebApp.entity.User;
 import WebApp.service.OrganizatioService;
 import WebApp.service.UserService;
 import WebApp.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/users")
@@ -23,14 +24,9 @@ public class UserController extends AbstractController<User,UserServiceImpl> {
     @Autowired
     OrganizatioService organizatioService;
 
-
-    @PostMapping
-    public ResponseEntity add(@RequestBody User user) {
-        return userService.add(user);
+    @GetMapping("/principal")
+    public ResponseEntity<Iterable<User>> getPrincipal() {
+        return userService.getPrincipal();
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity addOrganization(@PathVariable(value = "id") Long id, @RequestBody Organization organization ){
-        return organizatioService.add(id,organization);
-    }
 }
