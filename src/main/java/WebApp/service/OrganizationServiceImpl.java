@@ -6,6 +6,8 @@ import WebApp.repository.OrganizationRepository;
 import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -24,8 +26,10 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
     private OrganizationRepository organizationRepository;
 
     @Override
-    public ResponseEntity add(Long id, Organization organization) {
-        Optional user =userRepository.findById(id);
+    public ResponseEntity add(Organization organization) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional user = userRepository.findByEmail(userDetails.getUsername());
+
         if (user.isPresent()){
             organization.setUser((User) user.get());
             organizationRepository.save(organization);

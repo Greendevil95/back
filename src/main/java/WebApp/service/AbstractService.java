@@ -14,7 +14,10 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
         this.repository = repository;
     }
 
-
+    public ResponseEntity add(E entity){
+        repository.save(entity);
+        return ResponseEntity.ok("Entity " + entity.getClass().getName() + " added");
+    }
 
     public ResponseEntity<E> getById(Long id) {
         if (repository.findById(id).isPresent()) {
@@ -27,7 +30,6 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
         return ResponseEntity.ok(repository.findAll());
     }
 
-    @Override
     public ResponseEntity deleteById(Long id) {
         if(repository.findById(id).isPresent()){
             repository.deleteById(id);

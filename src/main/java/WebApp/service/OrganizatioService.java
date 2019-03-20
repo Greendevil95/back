@@ -10,6 +10,5 @@ import java.util.Optional;
 @Service
 public interface OrganizatioService extends CommonService<Organization> {
 
-    ResponseEntity add(Long id, Organization organization);
     ResponseEntity<Optional<Organization>> getAllForUser(User user);
 }

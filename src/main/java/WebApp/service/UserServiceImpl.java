@@ -5,6 +5,8 @@ import WebApp.entity.User;
 import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,10 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     @Autowired
     private UserRepository userRepository;
 
+    public ResponseEntity getPrincipal(){
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(userDetails);
+    }
 
     @Override
     public ResponseEntity add(User user) {
