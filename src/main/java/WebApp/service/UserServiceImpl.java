@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.Collections;
 
 @Service
@@ -22,10 +23,12 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     @Autowired
     private UserRepository userRepository;
 
+    @Override
     public ResponseEntity getPrincipal(){
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(userDetails);
-    }
+        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+        User authUser = getByEmail(authUserName);
+        return ResponseEntity.ok(authUser);
+}
 
     @Override
     public ResponseEntity add(User user) {
@@ -58,6 +61,13 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
             userRepository.save(user);
             return ResponseEntity.ok("Your data was refreshing!");
         } else return ResponseEntity.notFound().build();
+    }
+
+   @Override
+    public User getByEmail(String email) {
+        User user;
+        user = userRepository.findByEmail(email).get();
+        return user;
     }
 
     @Override

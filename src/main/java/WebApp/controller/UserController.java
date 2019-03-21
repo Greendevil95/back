@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/users")
 public class UserController extends AbstractController<User,UserServiceImpl> {
@@ -24,7 +26,7 @@ public class UserController extends AbstractController<User,UserServiceImpl> {
     @Autowired
     OrganizatioService organizatioService;
 
-    @GetMapping("/principal")
+    @GetMapping("/auth")
     public ResponseEntity<Iterable<User>> getPrincipal() {
         return userService.getPrincipal();
     }
