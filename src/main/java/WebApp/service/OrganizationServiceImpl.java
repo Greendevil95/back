@@ -27,10 +27,8 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
 
     @Override
     public ResponseEntity add(Organization organization) {
-        //String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
-        //Optional user = userRepository.findByEmail(authUserName);
-        // id замени на свой
-        Optional optionalUser = userRepository.findById((long) 35);
+        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional optionalUser = userRepository.findByEmail(authUserName);
         if (optionalUser.isPresent()){
             organization.setUser((User) optionalUser.get());
             organizationRepository.save(organization);
