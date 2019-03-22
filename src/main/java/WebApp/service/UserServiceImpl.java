@@ -6,11 +6,9 @@ import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.util.Collections;
 
 @Service
@@ -26,9 +24,9 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     @Override
     public ResponseEntity getPrincipal(){
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
-        User authUser = getByEmail(authUserName);
+        User authUser = userRepository.findByEmail(authUserName).get();
         return ResponseEntity.ok(authUser);
-}
+    }
 
     @Override
     public ResponseEntity add(User user) {
@@ -61,13 +59,6 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
             userRepository.save(user);
             return ResponseEntity.ok("Your data was refreshing!");
         } else return ResponseEntity.notFound().build();
-    }
-
-   @Override
-    public User getByEmail(String email) {
-        User user;
-        user = userRepository.findByEmail(email).get();
-        return user;
     }
 
     @Override
