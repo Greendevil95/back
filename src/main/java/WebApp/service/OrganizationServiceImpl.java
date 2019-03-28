@@ -6,8 +6,6 @@ import WebApp.repository.OrganizationRepository;
 import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,13 +25,18 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
 
     @Override
     public ResponseEntity add(Organization organization) {
-        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional optionalUser = userRepository.findByEmail(authUserName);
-        if (optionalUser.isPresent()){
-            organization.setUser((User) optionalUser.get());
+
+        //статическое поле!
+        String authUserName = "raya@mail.ru";
+
+        Optional optionalAuthUser = userRepository.findByEmail(authUserName);
+        if (optionalAuthUser.isPresent()) {
+            organization.setUser((User) optionalAuthUser.get());
             organizationRepository.save(organization);
-            return ResponseEntity.ok("Organization with name "+ organization.getName()+ " added for user with id "+ ((User) optionalUser.get()).getId());
-        }else   return ResponseEntity.notFound().build();
+            return ResponseEntity.ok("Organization with name " + organization.getName() + " added for user with id " + ((User) optionalAuthUser.get()).getId());
+        }   else return ResponseEntity.notFound().build();
+
+
     }
 
     @Override

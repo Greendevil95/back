@@ -1,6 +1,7 @@
 package WebApp.service;
 
 import WebApp.entity.Role;
+import WebApp.entity.State;
 import WebApp.entity.User;
 import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         if (!userRepository.findByEmail(user.getEmail()).isPresent()) {
             hashPass(user);
             user.setRoles(Collections.singleton(Role.USER));
+            user.setStates(Collections.singleton(State.ACTIVE));
             userRepository.save(user);
             return ResponseEntity.ok("Registration user with email " + user.getEmail() + " successful!");
         } else {
@@ -46,6 +48,8 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
             User updateUser = userRepository.findByEmail(user.getEmail()).get();
             user.setId(updateUser.getId());
             hashPass(user);
+            user.setRoles(Collections.singleton(Role.USER));
+            user.setStates(Collections.singleton(State.ACTIVE));
             userRepository.save(user);
             return ResponseEntity.ok("Data for user with email " + user.getEmail() + " was refreshing!");
         } else return ResponseEntity.notFound().build();
@@ -56,6 +60,8 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         if (userRepository.findById(id).isPresent()) {
             user.setId(id);
             hashPass(user);
+            user.setRoles(Collections.singleton(Role.USER));
+            user.setStates(Collections.singleton(State.ACTIVE));
             userRepository.save(user);
             return ResponseEntity.ok("Your data was refreshing!");
         } else return ResponseEntity.notFound().build();
@@ -64,6 +70,7 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     @Override
     public ResponseEntity delete(User user){
         if(userRepository.findByEmail(user.getEmail()).isPresent()){
+            //user.setStates(Collections.singleton(State.DELETE));
             userRepository.deleteByEmail(user.getEmail());
             return ResponseEntity.ok("User with email "+ user.getEmail() + " was delete.");
         }
