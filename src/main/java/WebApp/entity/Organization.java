@@ -25,7 +25,6 @@ public class Organization extends AbstractEntity{
     @Column(name = "rating")
     private Float rating;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;

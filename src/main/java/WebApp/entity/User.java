@@ -1,6 +1,7 @@
 package WebApp.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.util.Collections;
@@ -14,11 +15,14 @@ public class User extends  AbstractEntity  {
     @Column(name = "email")
     private String email;
 
+    @JsonIgnore
     @Column(name = "password", nullable = true)
     private String password;
 
-    @Column(name = "verify",nullable = false)
-    private Boolean verify;
+    @ElementCollection(targetClass = State.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_state",joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<State> states;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
@@ -36,45 +40,21 @@ public class User extends  AbstractEntity  {
     public User()  {
     }
 
-    public User(String email, String password, Boolean verify, List<Organization> organization, List<Reservation> reservations, Set<Role> roles) {
+    public User(String email, String password, List<Organization> organization, List<Reservation> reservations) {
         this.email = email;
         this.password = password;
-        this.verify = verify;
-        this.organization = organization;
-        this.reservations = reservations;
-        this.roles = roles;
-    }
-
-    public User(String email, String password, Boolean verify, List<Organization> organization, List<Reservation> reservations) {
-        this.email = email;
-        this.password = password;
-        this.verify = verify;
+        this.states = Collections.singleton(State.ACTIVE);
         this.organization = organization;
         this.reservations = reservations;
         this.roles = Collections.singleton(Role.USER);
     }
 
-    public void setEmail(String email) {
+    public User(String email, String password, Set<State> states, List<Organization> organization, List<Reservation> reservations, Set<Role> roles) {
         this.email = email;
-    }
-
-    public void setPassword(String password) {
         this.password = password;
-    }
-
-    public void setVerify(Boolean verify) {
-        this.verify = verify;
-    }
-
-    public void setOrganization(List<Organization> organization) {
+        this.states = states;
         this.organization = organization;
-    }
-
-    public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
-    }
-
-    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 
@@ -82,12 +62,13 @@ public class User extends  AbstractEntity  {
         return email;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
-    public Boolean getVerify() {
-        return verify;
+    public Set<State> getStates() {
+        return states;
     }
 
     public List<Organization> getOrganization() {
@@ -100,5 +81,30 @@ public class User extends  AbstractEntity  {
 
     public Set<Role> getRoles() {
         return roles;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @JsonProperty
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setStates(Set<State> states) {
+        this.states = states;
+    }
+
+    public void setOrganization(List<Organization> organization) {
+        this.organization = organization;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }
