@@ -9,7 +9,6 @@ package WebApp.security;
         prePostEnabled = true,
         securedEnabled = true,
         jsr250Enabled = true)
-public class MethodSecurityConfig
-        extends GlobalMethodSecurityConfiguration {
+public class MethodSecurityConfiguration extends GlobalMethodSecurityConfiguration {
 
 }
