@@ -49,6 +49,16 @@ public class User extends  AbstractEntity  {
         this.roles = Collections.singleton(Role.USER);
     }
 
+    public User(User user) {
+        this.email = user.email;
+        this.password = user.password;
+        this.states = user.states;
+        this.organization = user.organization;
+        this.reservations = user.reservations;
+        this.roles = user.roles;
+    }
+
+
     public User(String email, String password, Set<State> states, List<Organization> organization, List<Reservation> reservations, Set<Role> roles) {
         this.email = email;
         this.password = password;
