@@ -8,6 +8,8 @@ import WebApp.repository.ReservationRepository;
 import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -29,42 +31,51 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
     @Autowired
     UserRepository userRepository;
 
-
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity add(Reservation reservation) {
-        //static field
-        String authUserName = "raya@mail.ru";
+
+        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional optionalAuthUser = userRepository.findByEmail(authUserName);
+
         if (optionalAuthUser.isPresent()) {
 
-            if (organizationRepository.findById(reservation.getOrganization().getId()).isPresent()){
+            Long reservedOrganizationId = reservation.getOrganization().getId();
 
-                reservation.setUser((User) optionalAuthUser.get());
-                reservation.setRating(0);
-                reservationRepository.save(reservation);
+            if (!userRepository.findByOrganization(reservation.getOrganization()).equals(reservation.getUser())) {
+                if (organizationRepository.findById(reservedOrganizationId).isPresent()) {
 
-                return ResponseEntity.ok("User with username " + authUserName + "reserved to organization with name" + reservation.getOrganization().getName());
-            } else return ResponseEntity.notFound().build();
-        } else return ResponseEntity.notFound().build();
+                    reservation.setUser((User) optionalAuthUser.get());
+                    reservation.setRating(0);
+                    reservationRepository.save(reservation);
+
+                    return ResponseEntity.ok("User with username " + authUserName + "reserved to organization with name" + reservation.getOrganization().getName());
+                } else return ResponseEntity.badRequest().body("Organization for " + authUserName + " not found.");
+            }else return ResponseEntity.badRequest().body("You coudn't add reservation to your organization.");
+
+        } else return ResponseEntity.badRequest().body("User with email " + authUserName + " not found.");
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity update(Reservation reservation) {
         if (reservationRepository.findById(reservation.getId()).isPresent()) {
             reservationRepository.save(reservation);
             return ResponseEntity.ok("Reservation with id " + reservation.getId() + " was update");
-        }   else    return ResponseEntity.notFound().build();
+        }   else    return ResponseEntity.badRequest().body("Reservation not found.");
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity updateById(Long id, Reservation reservation) {
         if (reservationRepository.findById(id).isPresent()) {
             reservation.setId(id);
             reservationRepository.save(reservation);
-            return ResponseEntity.ok("Reservation with id " + reservation.getId() + " was update");
+            return ResponseEntity.ok("Reservation with id " + reservation.getId() + " was update.");
         }   else    return ResponseEntity.notFound().build();
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity delete(Reservation reservation) {
         if (reservationRepository.findById(reservation.getId()).isPresent()){
@@ -74,6 +85,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
         return ResponseEntity.notFound().build();
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity addRating(Reservation reservation) {
         float rating = reservation.getRating();
@@ -83,11 +95,12 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
 
             updateOrganizationRating(reservation.getOrganization(),rating);
             return ResponseEntity.ok("Rating save for organization " + reservation.getOrganization().getName());
-        }else return ResponseEntity.notFound().build();
+        }else return ResponseEntity.badRequest().body("Reservation not found.");
 
     }
 
-    private void updateOrganizationRating(Organization organization, float Rating){
+    @PreAuthorize("hasAuthority('USER')")
+    private ResponseEntity updateOrganizationRating(Organization organization, float Rating){
 
         if (organizationRepository.findById(organization.getId()).isPresent()) {
 
@@ -98,7 +111,8 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
 
             organization.setRating(organizationRatin);
             organizationRepository.save(organization);
-        }
+            return ResponseEntity.ok().build();
+        }else return ResponseEntity.badRequest().body("Organization not found.");
     }
 
 }

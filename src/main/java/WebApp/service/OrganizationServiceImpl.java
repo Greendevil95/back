@@ -6,6 +6,8 @@ import WebApp.repository.OrganizationRepository;
 import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -23,11 +25,11 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
     @Autowired
     private OrganizationRepository organizationRepository;
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity add(Organization organization) {
 
-        //статическое поле!
-        String authUserName = "raya@mail.ru";
+        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Optional optionalAuthUser = userRepository.findByEmail(authUserName);
         if (optionalAuthUser.isPresent()) {
@@ -35,39 +37,42 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
             organization.setRating((float) 0);
             organizationRepository.save(organization);
             return ResponseEntity.ok("Organization with name " + organization.getName() + " added for user with id " + ((User) optionalAuthUser.get()).getId());
-        }   else return ResponseEntity.notFound().build();
-
+        }   else return ResponseEntity.badRequest().body("User not found");
 
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity<Optional<Organization>> getAllForUser(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()){
             Long id = userRepository.findByEmail(user.getEmail()).get().getId();
             if (organizationRepository.findById(id).isPresent()){
                 return ResponseEntity.ok(organizationRepository.findById(id));
-            }else    return ResponseEntity.notFound().build();
+            }else    return ResponseEntity.badRequest().build();
         }else   return ResponseEntity.notFound().build();
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity updateById(Long id, Organization organization) {
         if (organizationRepository.findById(id).isPresent()){
             organization.setId(id);
             organizationRepository.save(organization);
             return ResponseEntity.ok("Organization with id "+ organization.getId() + " and name " + organization.getName() + " was update.");
-        }else   return ResponseEntity.notFound().build();
+        }else   return ResponseEntity.badRequest().body("Organization not found.");
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity update(Organization organization) {
         Long orgId=organization.getId();
         if (organizationRepository.findById(orgId).isPresent()){
             organizationRepository.save(organization);
             return ResponseEntity.ok("Organization with id "+ organization.getId() + " and name " + organization.getName() + " was update.");
-        }else   return ResponseEntity.notFound().build();
+        }else   return ResponseEntity.badRequest().body("Organization not found.");
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity delete(Organization organization) {
         Long orgId = organization.getId();

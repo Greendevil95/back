@@ -6,8 +6,10 @@ import WebApp.entity.User;
 import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -22,17 +24,22 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity getPrincipal(){
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
         User authUser = userRepository.findByEmail(authUserName).get();
-        return ResponseEntity.ok(authUser);
+        return ResponseEntity.ok(SecurityContextHolder.getContext().getAuthentication());
     }
+
 
     @Override
     public ResponseEntity add(User user) {
         if (!userRepository.findByEmail(user.getEmail()).isPresent()) {
-            hashPass(user);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setRoles(Collections.singleton(Role.USER));
             user.setStates(Collections.singleton(State.ACTIVE));
             userRepository.save(user);
@@ -42,31 +49,35 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         }
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity update(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()){
             User updateUser = userRepository.findByEmail(user.getEmail()).get();
             user.setId(updateUser.getId());
-            hashPass(user);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+
             user.setRoles(Collections.singleton(Role.USER));
             user.setStates(Collections.singleton(State.ACTIVE));
             userRepository.save(user);
             return ResponseEntity.ok("Data for user with email " + user.getEmail() + " was refreshing!");
-        } else return ResponseEntity.notFound().build();
+        } else return ResponseEntity.badRequest().body("User with this email: " + user.getEmail()+ " not found");
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Override
     public ResponseEntity updateById(Long id, User user) {
         if (userRepository.findById(id).isPresent()) {
             user.setId(id);
-            hashPass(user);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setRoles(Collections.singleton(Role.USER));
             user.setStates(Collections.singleton(State.ACTIVE));
             userRepository.save(user);
             return ResponseEntity.ok("Your data was refreshing!");
-        } else return ResponseEntity.notFound().build();
+        } else return ResponseEntity.badRequest().body("User with this email: " + user.getEmail()+ " not found");
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity delete(User user){
         if(userRepository.findByEmail(user.getEmail()).isPresent()){
@@ -74,13 +85,7 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
             userRepository.deleteByEmail(user.getEmail());
             return ResponseEntity.ok("User with email "+ user.getEmail() + " was delete.");
         }
-        else return ResponseEntity.notFound().build();
-    }
-
-    private void hashPass(User user){
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        String pass = user.getPassword();
-        user.setPassword(bCryptPasswordEncoder.encode(pass));
+        else return ResponseEntity.badRequest().body("User with this email: " + user.getEmail()+ " not found");
     }
 
 }
