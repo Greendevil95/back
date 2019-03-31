@@ -1,5 +1,6 @@
 package WebApp.security.Details;
 
+import WebApp.entity.Role;
 import WebApp.entity.State;
 import WebApp.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class UserDetailsImpl implements UserDetails {
 
@@ -21,11 +20,15 @@ public class UserDetailsImpl implements UserDetails {
         this.user = user;
     }
 
+    private final Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String userRole = user.getRoles().toString();
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole);
-        return Collections.singletonList(authority);
+
+        for (GrantedAuthority role : user.getRoles()) {
+            authorities.add(new SimpleGrantedAuthority(role.getAuthority()));
+        }
+        return authorities;
     }
 
     @Override

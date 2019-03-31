@@ -13,10 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-
     @Autowired
     private UserRepository userRepository;
-
 
     @Override
     public UserDetails loadUserByUsername(String email){
