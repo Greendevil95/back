@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/reservations")
 public class ReservationController extends AbstractController<Reservation,ReservationServiceImpl> {
+
     public ReservationController(ReservationServiceImpl service) {
         super(service);
     }
