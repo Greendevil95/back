@@ -29,10 +29,18 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
 
     @PreAuthorize("hasAuthority('USER')")
     @Override
-    public ResponseEntity getPrincipal(){
+    public ResponseEntity getAuthUser(){
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
         User authUser = userRepository.findByEmail(authUserName).get();
-        return ResponseEntity.ok(SecurityContextHolder.getContext().getAuthentication());
+        return ResponseEntity.ok(authUser);
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity getAuthUserId(){
+        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+        User authUser = userRepository.findByEmail(authUserName).get();
+        return ResponseEntity.ok(authUser.getId());
     }
 
 

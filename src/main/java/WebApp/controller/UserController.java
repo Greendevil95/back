@@ -27,8 +27,12 @@ public class UserController extends AbstractController<User,UserServiceImpl> {
     OrganizatioService organizatioService;
 
     @GetMapping("/auth")
-    public ResponseEntity<Iterable<User>> getPrincipal() {
-        return userService.getPrincipal();
+    public ResponseEntity<Iterable<User>> getAuthUser() {
+        return userService.getAuthUser();
     }
 
+    @GetMapping("/auth/id")
+    public ResponseEntity<Iterable<User>> getAuthUserId() {
+        return userService.getAuthUserId();
+    }
 }

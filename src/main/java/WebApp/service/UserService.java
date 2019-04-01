@@ -8,5 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface UserService extends CommonService<User> {
 
-    ResponseEntity getPrincipal();
+    ResponseEntity getAuthUser();
+    ResponseEntity getAuthUserId();
 }
