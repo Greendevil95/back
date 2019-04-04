@@ -1,6 +1,8 @@
 package WebApp.controller;
 
 import WebApp.entity.User;
+import WebApp.repository.specifications.SearchCriteria;
+import WebApp.repository.specifications.UserSpecification;
 import WebApp.service.OrganizatioService;
 import WebApp.service.UserService;
 import WebApp.service.UserServiceImpl;
@@ -34,5 +36,11 @@ public class UserController extends AbstractController<User,UserServiceImpl> {
     @GetMapping("/auth/id")
     public ResponseEntity<Iterable<User>> getAuthUserId() {
         return userService.getAuthUserId();
+    }
+
+    @GetMapping("test")
+    public ResponseEntity<Iterable<User>> bySpec(){
+        UserSpecification userSpecification = new UserSpecification(new SearchCriteria("email", ":", "alex@mail.ru"));
+        return userService.bySpec(userSpecification);
     }
 }
