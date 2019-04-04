@@ -94,6 +94,8 @@ public class Organization extends AbstractEntity{
         return rating;
     }
 
+//    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="email")
+//    @JsonIdentityReference(alwaysAsId=true)
     public User getUser() {
         return user;
     }
