@@ -17,7 +17,6 @@ import java.util.Optional;
 @Service
 public class ReservationServiceImpl extends AbstractService<Reservation,ReservationRepository> implements ReservationService {
 
-
     public ReservationServiceImpl(ReservationRepository repository) {
         super(repository);
     }
@@ -41,18 +40,16 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
         if (optionalAuthUser.isPresent()) {
 
             Long reservedOrganizationId = reservation.getOrganization().getId();
-
-            if (!userRepository.findByOrganization(reservation.getOrganization()).equals(reservation.getUser())) {
-                if (organizationRepository.findById(reservedOrganizationId).isPresent()) {
+            if (organizationRepository.findById(reservedOrganizationId).isPresent()) {
+                if (!userRepository.findByOrganization(reservation.getOrganization()).equals(reservation.getUser())) {
 
                     reservation.setUser((User) optionalAuthUser.get());
                     reservation.setRating(0);
                     reservationRepository.save(reservation);
 
-                    return ResponseEntity.ok("User with username " + authUserName + "reserved to organization with name" + reservation.getOrganization().getName());
-                } else return ResponseEntity.badRequest().body("Organization for " + authUserName + " not found.");
-            }else return ResponseEntity.badRequest().body("You coudn't add reservation to your organization.");
-
+                    return ResponseEntity.ok("User with username " + authUserName + "reserved to organization with id =  " + reservedOrganizationId);
+                }else return ResponseEntity.badRequest().body("You coudn't add reservation to your organization.");
+            } else return ResponseEntity.badRequest().body("Organization with id = " + reservedOrganizationId + " not found.");
         } else return ResponseEntity.badRequest().body("User with email " + authUserName + " not found.");
     }
 

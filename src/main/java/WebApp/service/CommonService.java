@@ -1,7 +1,10 @@
 package WebApp.service;
 
 import WebApp.entity.AbstractEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public interface CommonService<E extends AbstractEntity> {
 
@@ -19,4 +22,5 @@ public interface CommonService<E extends AbstractEntity> {
 
     ResponseEntity deleteById(Long Id);
 
+    ResponseEntity<List<E>> getByPage(Integer numPage, String fieldForSort);
 }

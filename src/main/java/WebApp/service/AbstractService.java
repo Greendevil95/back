@@ -3,7 +3,13 @@ package WebApp.service;
 import WebApp.entity.AbstractEntity;
 import WebApp.repository.CommonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.util.List;
 
 public abstract class AbstractService<E extends AbstractEntity, R extends CommonRepository<E>> implements CommonService<E> {
 
@@ -14,11 +20,15 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
         this.repository = repository;
     }
 
+    private static int pageSize = 3;
+
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity add(E entity){
         repository.save(entity);
         return ResponseEntity.ok("Entity " + entity.getClass().getName() + " added");
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<E> getById(Long id) {
         if (repository.findById(id).isPresent()) {
             E entity = repository.findById(id).get();
@@ -26,10 +36,27 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
         } else return ResponseEntity.notFound().build();
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<Iterable<E>> getAll() {
         return ResponseEntity.ok(repository.findAll());
     }
 
+    @PreAuthorize("hasAuthority('USER')")
+    public ResponseEntity<List<E>> getByPage(Integer numPage, String fieldForSort){
+
+        if (fieldForSort == null) {
+            fieldForSort = "id";
+        }
+        if (numPage == null){
+            return ResponseEntity.ok(repository.findAll());
+        }
+        else {
+            Pageable pageable = PageRequest.of(numPage, pageSize, Sort.by(fieldForSort));
+            return ResponseEntity.ok(repository.findAll(pageable).getContent());
+        }
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity deleteById(Long id) {
         if(repository.findById(id).isPresent()){
             repository.deleteById(id);

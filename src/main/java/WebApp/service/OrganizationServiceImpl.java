@@ -38,7 +38,6 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
             organizationRepository.save(organization);
             return ResponseEntity.ok("Organization with name " + organization.getName() + " added for user with id " + ((User) optionalAuthUser.get()).getId());
         }   else return ResponseEntity.badRequest().body("User not found");
-
     }
 
     @PreAuthorize("hasAuthority('USER')")

@@ -4,15 +4,17 @@ import WebApp.entity.Role;
 import WebApp.entity.State;
 import WebApp.entity.User;
 import WebApp.repository.UserRepository;
+import WebApp.repository.specifications.UserSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl extends AbstractService<User, UserRepository> implements UserService  {
@@ -26,6 +28,15 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+
+
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity<Iterable<User>> getAll() {
+        return ResponseEntity.ok(userRepository.findByStates(State.ACTIVE));
+    }
+
 
     @PreAuthorize("hasAuthority('USER')")
     @Override
@@ -42,7 +53,6 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         User authUser = userRepository.findByEmail(authUserName).get();
         return ResponseEntity.ok(authUser.getId());
     }
-
 
     @Override
     public ResponseEntity add(User user) {
@@ -89,11 +99,31 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     @Override
     public ResponseEntity delete(User user){
         if(userRepository.findByEmail(user.getEmail()).isPresent()){
-            //user.setStates(Collections.singleton(State.DELETE));
-            userRepository.deleteByEmail(user.getEmail());
+            user.setStates(Collections.singleton(State.DELETE));
+            userRepository.save(user);
+            //userRepository.deleteByEmail(user.getEmail());
             return ResponseEntity.ok("User with email "+ user.getEmail() + " was delete.");
         }
         else return ResponseEntity.badRequest().body("User with this email: " + user.getEmail()+ " not found");
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity deleteById(Long id) {
+        Optional<User> optionalDeleteUser = userRepository.findById(id);
+        if(optionalDeleteUser.isPresent()){
+            User deleteUser = optionalDeleteUser.get();
+            deleteUser.setStates(Collections.singleton(State.DELETE));
+            userRepository.save(deleteUser);
+            //userRepository.deleteByEmail(user.getEmail());
+            return ResponseEntity.ok("User with email "+ deleteUser.getEmail() + " was delete.");
+        }
+        else return ResponseEntity.badRequest().body("User with this email: " + optionalDeleteUser.get().getEmail()+ " not found");
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    public ResponseEntity<Iterable<User>> bySpec (UserSpecification userSpecification){
+        return ResponseEntity.ok(userRepository.findAll(Specification.where(userSpecification)));
     }
 
 }
