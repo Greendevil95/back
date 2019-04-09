@@ -9,5 +9,4 @@ import java.util.List;
 
 @NoRepositoryBean
 public interface CommonRepository<E extends AbstractEntity> extends PagingAndSortingRepository<E,Long>, JpaSpecificationExecutor<E> {
-    List<E> findAll();
 }
