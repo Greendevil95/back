@@ -29,8 +29,6 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
-
     @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity<Iterable<User>> getAll() {
@@ -62,19 +60,18 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
             user.setStates(Collections.singleton(State.ACTIVE));
             userRepository.save(user);
             return ResponseEntity.ok("Registration user with email " + user.getEmail() + " successful!");
-        } else {
-            return ResponseEntity.badRequest().body("User with this email: " + user.getEmail()+ " already exists!");
-        }
+        } else return ResponseEntity.badRequest().body("User with email: " + user.getEmail()+ " already exists!");
     }
 
-    @PreAuthorize("hasAuthority('USER')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity update(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()){
-            User updateUser = userRepository.findByEmail(user.getEmail()).get();
-            user.setId(updateUser.getId());
+    public ResponseEntity updateById(Long id, User user) {
+        if (id == null){
+            id = userRepository.findByEmail(user.getEmail()).get().getId();
+        }
+        if (id != null && userRepository.findById(id).isPresent()) {
+            user.setId(id);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-
             user.setRoles(Collections.singleton(Role.USER));
             user.setStates(Collections.singleton(State.ACTIVE));
             userRepository.save(user);
@@ -84,16 +81,12 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity updateById(Long id, User user) {
-        if (userRepository.findById(id).isPresent()) {
-            user.setId(id);
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setRoles(Collections.singleton(Role.USER));
-            user.setStates(Collections.singleton(State.ACTIVE));
-            userRepository.save(user);
-            return ResponseEntity.ok("Your data was refreshing!");
-        } else return ResponseEntity.badRequest().body("User with this email: " + user.getEmail()+ " not found");
+    public ResponseEntity update(User user) {
+        return updateById(user.getId(),user);
     }
+
+
+
 
     @PreAuthorize("hasAuthority('USER')")
     @Override
@@ -103,11 +96,10 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
             userRepository.save(user);
             //userRepository.deleteByEmail(user.getEmail());
             return ResponseEntity.ok("User with email "+ user.getEmail() + " was delete.");
-        }
-        else return ResponseEntity.badRequest().body("User with this email: " + user.getEmail()+ " not found");
+        } else return ResponseEntity.badRequest().body("User with email: " + user.getEmail()+ " not found");
     }
 
-    @PreAuthorize("hasAuthority('USER')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Override
     public ResponseEntity deleteById(Long id) {
         Optional<User> optionalDeleteUser = userRepository.findById(id);
@@ -116,9 +108,8 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
             deleteUser.setStates(Collections.singleton(State.DELETE));
             userRepository.save(deleteUser);
             //userRepository.deleteByEmail(user.getEmail());
-            return ResponseEntity.ok("User with email "+ deleteUser.getEmail() + " was delete.");
-        }
-        else return ResponseEntity.badRequest().body("User with this email: " + optionalDeleteUser.get().getEmail()+ " not found");
+            return ResponseEntity.ok("User with email " + deleteUser.getEmail() + " was delete.");
+        } else return ResponseEntity.badRequest().body("User with email: " + optionalDeleteUser.get().getEmail()+ " not found");
     }
 
     @PreAuthorize("hasAuthority('USER')")

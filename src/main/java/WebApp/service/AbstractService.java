@@ -23,12 +23,6 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
     private static int pageSize = 3;
 
     @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity add(E entity){
-        repository.save(entity);
-        return ResponseEntity.ok("Entity " + entity.getClass().getName() + " added");
-    }
-
-    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<E> getById(Long id) {
         if (repository.findById(id).isPresent()) {
             E entity = repository.findById(id).get();
@@ -48,7 +42,7 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
             fieldForSort = "id";
         }
         if (numPage == null){
-            return ResponseEntity.ok(repository.findAll());
+            return ResponseEntity.ok((List)repository.findAll());
         }
         else {
             Pageable pageable = PageRequest.of(numPage, pageSize, Sort.by(fieldForSort));
@@ -56,7 +50,7 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
         }
     }
 
-    @PreAuthorize("hasAuthority('USER')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity deleteById(Long id) {
         if(repository.findById(id).isPresent()){
             repository.deleteById(id);
@@ -64,6 +58,4 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
         }
         else return ResponseEntity.notFound().build();
     }
-
-
 }
