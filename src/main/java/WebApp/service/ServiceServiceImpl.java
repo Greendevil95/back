@@ -72,12 +72,14 @@ public class ServiceServiceImpl extends AbstractService<Service,ServiceRepositor
     @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity delete(Service service) {
-        if (!serviceRepository.findById(service.getId()).isPresent())
+
+        Service serviceForDelet = serviceRepository.findById(service.getId()).get();
+        if (serviceForDelet == null)
             return ResponseEntity.badRequest().body("Service with id " + service.getId() + " not found");
 
         String authUserName =SecurityContextHolder.getContext().getAuthentication().getName();
         User authUser = userRepository.findByEmail(authUserName).get();
-        Organization serviceForOrganization = organizationRepository.findById(service.getOrganization().getId()).get();
+        Organization serviceForOrganization = organizationRepository.findById(serviceForDelet.getOrganization().getId()).get();
 
         if (!serviceForOrganization.getUser().equals(authUser))
             return ResponseEntity.badRequest().body("This is not your organization.");
