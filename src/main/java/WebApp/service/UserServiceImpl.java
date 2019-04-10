@@ -6,6 +6,9 @@ import WebApp.entity.User;
 import WebApp.repository.UserRepository;
 import WebApp.repository.specifications.UserSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,8 +34,15 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
 
     @PreAuthorize("hasAuthority('USER')")
     @Override
-    public ResponseEntity<Iterable<User>> getAll() {
-        return ResponseEntity.ok(userRepository.findByStates(State.ACTIVE));
+    public ResponseEntity<Iterable<User>> getAll(Integer page, String fieldForSort) {
+        if (page == null){
+            page = 0;
+        }
+        if (fieldForSort == null) {
+            fieldForSort = "id";
+        }
+        Pageable pageable = PageRequest.of(page, AbstractService.getPageSize() , Sort.by(fieldForSort));
+        return ResponseEntity.ok(repository.findByStates(State.ACTIVE, pageable));
     }
 
 

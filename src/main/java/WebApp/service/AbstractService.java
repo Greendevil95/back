@@ -9,8 +9,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import java.util.List;
-
 public abstract class AbstractService<E extends AbstractEntity, R extends CommonRepository<E>> implements CommonService<E> {
 
     protected final R repository;
@@ -20,7 +18,11 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
         this.repository = repository;
     }
 
-    private static int pageSize = 3;
+    private static int pageSize = 1 ;
+
+    public static int getPageSize() {
+        return pageSize;
+    }
 
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<E> getById(Long id) {
@@ -31,23 +33,15 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
     }
 
     @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<Iterable<E>> getAll() {
-        return ResponseEntity.ok(repository.findAll());
-    }
-
-    @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<List<E>> getByPage(Integer numPage, String fieldForSort){
-
+    public ResponseEntity<Iterable<E>> getAll(Integer page, String fieldForSort) {
+        if (page == null){
+            page = 0;
+        }
         if (fieldForSort == null) {
             fieldForSort = "id";
         }
-        if (numPage == null){
-            return ResponseEntity.ok((List)repository.findAll());
-        }
-        else {
-            Pageable pageable = PageRequest.of(numPage, pageSize, Sort.by(fieldForSort));
-            return ResponseEntity.ok(repository.findAll(pageable).getContent());
-        }
+        Pageable pageable = PageRequest.of(page, pageSize,Sort.by(fieldForSort));
+        return ResponseEntity.ok(repository.findAll(pageable).getContent());
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
