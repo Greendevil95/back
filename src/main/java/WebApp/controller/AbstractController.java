@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 public class AbstractController <E extends AbstractEntity, S extends CommonService<E>>{
 
     private final S service;
@@ -23,23 +21,15 @@ public class AbstractController <E extends AbstractEntity, S extends CommonServi
     }
 
     @GetMapping()
-    public ResponseEntity<Iterable<E>> getAll() {
-        return service.getAll();
+    public ResponseEntity<Iterable<E>> getAll(@RequestParam(value = "page", required = false) Integer page,
+                                              @RequestParam(value = "field" , required = false) String fieldForSort,
+                                              @RequestParam(value = "search", required = false) String search) {
+        return service.getAll(page,fieldForSort);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<E> getById(@PathVariable(value = "id") Long id) {
         return service.getById(id);
-    }
-
-    @GetMapping("/page/{numPage}")
-    public ResponseEntity<List<E>> getByPage(@PathVariable(value = "numPage") Integer numPage) {
-        return service.getByPage(numPage,null);
-    }
-
-    @GetMapping("/page/{numPage}/{fieldForSort}")
-    public ResponseEntity<List<E>> getByPage(@PathVariable(value = "numPage") Integer numPage, @PathVariable(value = "fieldForSort") String fieldForSort) {
-        return service.getByPage(numPage,fieldForSort);
     }
 
     @PutMapping
