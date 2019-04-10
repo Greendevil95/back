@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.Optional;
+
 @org.springframework.stereotype.Service
 public class ServiceServiceImpl extends AbstractService<Service,ServiceRepository> implements ServiceService {
 
@@ -73,18 +75,27 @@ public class ServiceServiceImpl extends AbstractService<Service,ServiceRepositor
     @Override
     public ResponseEntity delete(Service service) {
 
-        Service serviceForDelet = serviceRepository.findById(service.getId()).get();
-        if (serviceForDelet == null)
+        Optional<Service> serviceForDelete = serviceRepository.findById(service.getId());
+        if (serviceForDelete == null)
             return ResponseEntity.badRequest().body("Service with id " + service.getId() + " not found");
 
         String authUserName =SecurityContextHolder.getContext().getAuthentication().getName();
         User authUser = userRepository.findByEmail(authUserName).get();
-        Organization serviceForOrganization = organizationRepository.findById(serviceForDelet.getOrganization().getId()).get();
+        Organization serviceForOrganization = organizationRepository.findById(serviceForDelete.get().getOrganization().getId()).get();
 
         if (!serviceForOrganization.getUser().equals(authUser))
             return ResponseEntity.badRequest().body("This is not your organization.");
 
         serviceRepository.deleteById(service.getId());
         return ResponseEntity.ok("Service with id " + service.getId() + " was deleted.");
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity deleteById(Long id) {
+        Optional<Service> service = serviceRepository.findById(id);
+        if (service.isPresent())
+            return delete(serviceRepository.findById(id).get());
+        else return ResponseEntity.badRequest().body("Service with id " + id + " not found");
     }
 }
