@@ -35,12 +35,15 @@ public class ServiceServiceImpl extends AbstractService<Service,ServiceRepositor
         String authUserName =SecurityContextHolder.getContext().getAuthentication().getName();
         User authUser = userRepository.findByEmail(authUserName).get();
         Organization serviceForOrganization = organizationRepository.findById(service.getOrganization().getId()).get();
-        if (serviceForOrganization.getUser().equals(authUser)){
-            service.setOrganization(serviceForOrganization);
-            service.setReservations(null);
-            serviceRepository.save(service);
-            return ResponseEntity.ok().body("Service for organization " + serviceForOrganization.getName() + " added.");
-        } else return ResponseEntity.badRequest().body("This is not your organization.");
+        if (!isAuthUser(serviceForOrganization.getUser())) {
+            return ResponseEntity.badRequest().body("This is not your organization.");
+        }
+
+        service.setOrganization(serviceForOrganization);
+        service.setReservations(null);
+        service.setRating((float) 0);
+        serviceRepository.save(service);
+        return ResponseEntity.ok().body("Service for organization " + serviceForOrganization.getName() + " added.");
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -49,17 +52,18 @@ public class ServiceServiceImpl extends AbstractService<Service,ServiceRepositor
         if (id == null)
             id = service.getId();
 
-        if (!serviceRepository.findById(id).isPresent())
+        if (!serviceRepository.findById(id).isPresent()) {
             return ResponseEntity.badRequest().body("Service with id " + id + " not found");
+        }
+
+        Organization serviceForOrganization = organizationRepository.findById(service.getOrganization().getId()).get();
+
+        if (!isAuthUser(serviceForOrganization.getUser())) {
+            return ResponseEntity.badRequest().body("This is not your organization.");
+        }
 
         service.setId(id);
         service.setReservations(serviceRepository.findById(id).get().getReservations());
-
-        String authUserName =SecurityContextHolder.getContext().getAuthentication().getName();
-        User authUser = userRepository.findByEmail(authUserName).get();
-        Organization serviceForOrganization = organizationRepository.findById(service.getOrganization().getId()).get();
-        if (!serviceForOrganization.getUser().equals(authUser))
-            return ResponseEntity.badRequest().body("This is not your organization.");
 
         service.setOrganization(serviceForOrganization);
         return ResponseEntity.ok("Service with id " + service.getId() + " updated." );

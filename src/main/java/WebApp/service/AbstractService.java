@@ -1,13 +1,16 @@
 package WebApp.service;
 
 import WebApp.entity.AbstractEntity;
+import WebApp.entity.User;
 import WebApp.repository.CommonRepository;
+import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public abstract class AbstractService<E extends AbstractEntity, R extends CommonRepository<E>> implements CommonService<E> {
 
@@ -18,7 +21,7 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
         this.repository = repository;
     }
 
-    private static int pageSize = 1 ;
+    private static int pageSize = 10 ;
 
     public static int getPageSize() {
         return pageSize;
@@ -44,12 +47,20 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
         return ResponseEntity.ok(repository.findAll(pageable).getContent());
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity deleteById(Long id) {
         if(repository.findById(id).isPresent()){
             repository.deleteById(id);
             return ResponseEntity.ok("Object with id " + id + " was delete.");
         }
         else return ResponseEntity.notFound().build();
+    }
+
+    @Autowired
+    UserRepository userRepository;
+
+    public boolean isAuthUser(User user){
+        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+        return (user.equals(userRepository.findByEmail(authUserName).get()));
     }
 }

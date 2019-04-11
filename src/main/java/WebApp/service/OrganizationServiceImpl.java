@@ -30,21 +30,20 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
     public ResponseEntity add(Organization organization) {
 
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
-
         Optional optionalAuthUser = userRepository.findByEmail(authUserName);
-        if (optionalAuthUser.isPresent()) {
-            organization.setUser((User) optionalAuthUser.get());
-            organization.setRating((float) 0);
-            organizationRepository.save(organization);
-            return ResponseEntity.ok("Organization with name " + organization.getName() + " added for user with id " + ((User) optionalAuthUser.get()).getId());
-        }   else return ResponseEntity.badRequest().body("User not found");
+
+        organization.setUser((User) optionalAuthUser.get());
+        organization.setRating((float) 0);
+        organizationRepository.save(organization);
+        return ResponseEntity.ok("Organization with name " + organization.getName() + " added for user with id " + ((User) optionalAuthUser.get()).getId());
     }
 
     @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity updateById(Long id, Organization organization) {
-        if (id == null)
+        if (id == null) {
             id = organization.getId();
+        }
 
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Organization> optionalUpdateOrganization = organizationRepository.findById(id);
@@ -52,14 +51,14 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
         if (!optionalUpdateOrganization.isPresent()) {
             return ResponseEntity.badRequest().body("Organization not found.");
         }
-        if (userRepository.findByEmail(authUserName).get()
-                .equals(optionalUpdateOrganization.get().getUser())) {
-            organization.setUser(userRepository.findByEmail(authUserName).get());
-            organization.setId(id);
-            organizationRepository.save(organization);
-            return ResponseEntity.ok("Organization with id " + organization.getId() + " and name " + organization.getName() + " was update.");
-        } else return ResponseEntity.badRequest().body("This is not your organization.");
+        if (!isAuthUser(optionalUpdateOrganization.get().getUser())) {
+            return ResponseEntity.badRequest().body("This is not your organization.");
+        }
 
+        organization.setUser(userRepository.findByEmail(authUserName).get());
+        organization.setId(id);
+        organizationRepository.save(organization);
+        return ResponseEntity.ok("Organization with id " + organization.getId() + " and name " + organization.getName() + " was update.");
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -77,8 +76,7 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
         if (!organizationRepository.findById(organizationId).isPresent()) {
             ResponseEntity.badRequest().body("Organization with id " + organizationId + " not found.");
         }
-        if (userRepository.findByEmail(authUserName).get()
-                .equals(organizationRepository.findById(organizationId).get().getUser())) {
+        if (isAuthUser(organizationRepository.findById(organizationId).get().getUser())) {
             organizationRepository.deleteById(organizationId);
             return ResponseEntity.ok("Organization with id " + organizationId + "was delete.");
         } else return ResponseEntity.badRequest().body("This is not your organization.");

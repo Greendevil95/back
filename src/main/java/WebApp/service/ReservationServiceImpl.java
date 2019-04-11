@@ -44,11 +44,10 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
         User authUser = userRepository.findByEmail(authUserName).get();
 
-        if (serviceRepository.findById(
+        if (isAuthUser(serviceRepository.findById(
                 reservation.getService().getId())
                 .get()
-                .getOrganization().getUser()
-                .equals(authUser)){
+                .getOrganization().getUser())){
             return ResponseEntity.badRequest().body("You coudn't add reservation to your organization.");
         }
 
@@ -68,17 +67,14 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
             ResponseEntity.badRequest().body("Reservation not found.");
         }
 
-        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
-        User authUser = userRepository.findByEmail(authUserName).get();
-        if (!reservation1ForRating.get().getUser()
-                .equals(authUser)){
-            ResponseEntity.badRequest().body("Its reservation not for you " + authUserName + ".");
+        if (!isAuthUser(reservation1ForRating.get().getUser())){
+            ResponseEntity.badRequest().body("Its reservation not for you .");
         }
 
         reservation1ForRating.get().setRating(reservation.getRating());
         reservationRepository.save(reservation1ForRating.get());
 
-        updateOrganizationRating(reservation.getService().getOrganization(),reservation.getRating());
+        updateOrganizationRating(reservation.getService().getOrganization());
 
         return ResponseEntity.ok("Rating save for service.");
     }
@@ -86,20 +82,26 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
     @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity update(Reservation reservation) {
-        if (reservationRepository.findById(reservation.getId()).isPresent()) {
-            reservationRepository.save(reservation);
-            return ResponseEntity.ok("Reservation with id " + reservation.getId() + " was update");
-        }   else    return ResponseEntity.badRequest().body("Reservation not found.");
+        Optional<Reservation> updateReservation = reservationRepository.findById(reservation.getId());
+        if (!updateReservation.isPresent()) {
+            return ResponseEntity.badRequest().body("Reservation with id " + updateReservation.get().getId() + " not found.");
+        }
+
+        if (!isAuthUser(updateReservation.get().getUser())){
+            return ResponseEntity.badRequest().body("Reservation with id " + updateReservation.get().getId() + " not found.");
+        }
+        reservation.setUser(updateReservation.get().getUser());
+        reservation.setService(updateReservation.get().getService());
+        reservationRepository.save(reservation);
+        updateOrganizationRating(reservation.getService().getOrganization());
+        return ResponseEntity.ok("Reservation with id " + reservation.getId() + " was update");
     }
 
     @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity updateById(Long id, Reservation reservation) {
-        if (reservationRepository.findById(id).isPresent()) {
-            reservation.setId(id);
-            reservationRepository.save(reservation);
-            return ResponseEntity.ok("Reservation with id " + reservation.getId() + " was update.");
-        }   else    return ResponseEntity.notFound().build();
+        reservation.setId(id);
+        return update(reservation);
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -112,7 +114,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
         return ResponseEntity.notFound().build();
     }
 
-    private void updateOrganizationRating(Organization organization, float Rating){
+    private void updateOrganizationRating(Organization organization){
 //
 //        organization.setRating(organizationRatin);
 //        organizationRepository.save(organization);
