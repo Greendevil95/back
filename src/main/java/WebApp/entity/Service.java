@@ -7,7 +7,18 @@ import java.util.List;
 
 @Entity
 public class Service extends AbstractEntity{
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "price")
+    private Float price;
+
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "rating")
+    private Float rating;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "organization_id")
@@ -26,8 +37,20 @@ public class Service extends AbstractEntity{
         this.reservations = reservations;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(Float price) {
+        this.price = price;
+    }
+
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setRating(Float rating) {
+        this.rating = rating;
     }
 
     public void setOrganization(Organization organization) {
@@ -38,8 +61,20 @@ public class Service extends AbstractEntity{
         this.reservations = reservations;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public Float getPrice() {
+        return price;
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public Float getRating() {
+        return rating;
     }
 
     public Organization getOrganization() {
