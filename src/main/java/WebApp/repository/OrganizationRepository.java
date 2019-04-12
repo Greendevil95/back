@@ -2,12 +2,8 @@ package WebApp.repository;
 
 
 import WebApp.entity.Organization;
-
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.util.List;
 
 public interface OrganizationRepository extends CommonRepository<Organization> {
     @Query(value = "select AVG(r.rating) " +

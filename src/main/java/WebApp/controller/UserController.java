@@ -1,8 +1,6 @@
 package WebApp.controller;
 
 import WebApp.entity.User;
-import WebApp.repository.UserRepository;
-import WebApp.service.OrganizatioService;
 import WebApp.service.UserService;
 import WebApp.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;

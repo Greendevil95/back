@@ -9,5 +9,4 @@ import org.springframework.stereotype.Service;
 public interface UserService extends CommonService<User> {
     ResponseEntity getAuthUser();
     ResponseEntity getAuthUserId();
-   // ResponseEntity<Iterable<User>> bySpec(UserSpecification userSpecification);
 }
