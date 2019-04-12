@@ -7,13 +7,15 @@ public class EntityResponse<E extends AbstractEntity> {
     private Integer totalPages;
     private Integer size;
     private Integer number;
-    private Iterable<E> entity;
+    private Integer numberOfElements;
+    private Iterable<E> content;
 
     public EntityResponse(Page<E> page) {
         totalPages = page.getTotalPages();
         size = page.getSize();
         number = page.getNumber();
-        entity = page.getContent();
+        numberOfElements = page.getNumberOfElements();
+        content = page.getContent();
     }
 
     public EntityResponse() {
@@ -31,8 +33,12 @@ public class EntityResponse<E extends AbstractEntity> {
         this.number = number;
     }
 
-    public void setEntity(Iterable<E> entity) {
-        this.entity = entity;
+    public void setNumberOfElements(Integer numberOfElements) {
+        this.numberOfElements = numberOfElements;
+    }
+
+    public void setContent(Iterable<E> content) {
+        this.content = content;
     }
 
     public Integer getTotalPages() {
@@ -47,7 +53,11 @@ public class EntityResponse<E extends AbstractEntity> {
         return number;
     }
 
-    public Iterable<E> getEntity() {
-        return entity;
+    public Integer getNumberOfElements() {
+        return numberOfElements;
+    }
+
+    public Iterable<E> getContent() {
+        return content;
     }
 }

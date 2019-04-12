@@ -1,14 +1,13 @@
 package WebApp.repository.specifications;
 
 import WebApp.entity.AbstractEntity;
-import WebApp.entity.User;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CommonSpecificationBuilder<E extends AbstractEntity, T extends CommonSpecification<E>> {
+public class CommonSpecificationBuilder<E extends AbstractEntity> {
 
     private final List<SearchCriteria> params;
 

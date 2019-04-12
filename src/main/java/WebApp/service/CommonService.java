@@ -2,7 +2,6 @@ package WebApp.service;
 
 import WebApp.entity.AbstractEntity;
 import WebApp.entity.response.EntityResponse;
-import WebApp.repository.specifications.CommonSpecification;
 import org.springframework.http.ResponseEntity;
 
 public interface CommonService<E extends AbstractEntity> {
@@ -11,7 +10,7 @@ public interface CommonService<E extends AbstractEntity> {
 
     ResponseEntity<E> getById(Long Id);
 
-    ResponseEntity<EntityResponse<E>> getAll(Integer page, String fieldForSort);
+    ResponseEntity<EntityResponse<E>> getAll(Integer page, String fieldForSort, String specification);
 
     ResponseEntity update(E entity);
 
