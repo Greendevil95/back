@@ -22,12 +22,6 @@ public class UserController extends AbstractController<User,UserServiceImpl> {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    OrganizatioService organizatioService;
-
-    @Autowired
-    UserRepository userRepository;
-
     @GetMapping("/auth")
     public ResponseEntity<Iterable<User>> getAuthUser() {
         return userService.getAuthUser();
@@ -37,23 +31,4 @@ public class UserController extends AbstractController<User,UserServiceImpl> {
     public ResponseEntity<Iterable<User>> getAuthUserId() {
         return userService.getAuthUserId();
     }
-
-//    @GetMapping("/test")
-//    public ResponseEntity<Iterable<User>> bySpec(){
-//        UserSpecification userSpecification = new UserSpecification(new SearchCriteria("email", ":", "alex@mail.ru"));
-//        return userService.bySpec(userSpecification);
-//    }
-//
-//    @GetMapping("/spec")
-//    public List<User> search(@RequestParam(value = "search", required = false) String search) {
-//        UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
-//        Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
-//        Matcher matcher = pattern.matcher(search + ",");
-//        while (matcher.find()) {
-//            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-//        }
-//
-//        Specification<User> spec = builder.build();
-//        return userRepository.findAll(spec);
-//    }
 }

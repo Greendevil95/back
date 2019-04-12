@@ -74,7 +74,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
         reservation1ForRating.get().setRating(reservation.getRating());
         reservationRepository.save(reservation1ForRating.get());
 
-        updateOrganizationRating(reservation.getService().getOrganization());
+        updateOrganizationRating(reservation1ForRating.get().getService().getOrganization());
 
         return ResponseEntity.ok("Rating save for service.");
     }
@@ -107,19 +107,29 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
     @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity delete(Reservation reservation) {
-        if (reservationRepository.findById(reservation.getId()).isPresent()){
-            reservationRepository.deleteById(reservation.getId());
-            return ResponseEntity.ok("Organization with id "+ reservation.getId() + "was delete.");
+        Optional<Reservation> deleteReservation = reservationRepository.findById(reservation.getId());
+        if (!deleteReservation.isPresent()) {
+            return ResponseEntity.badRequest().body("Reservatiom with id " + deleteReservation.get().getId() + " not found.");
         }
-        return ResponseEntity.notFound().build();
+        if (!isAuthUser(deleteReservation.get().getUser())){
+            return ResponseEntity.badRequest().body("Its not you reservation.");
+        }
+        reservationRepository.deleteById(reservation.getId());
+        return ResponseEntity.ok("Organization with id "+ reservation.getId() + "was delete.");
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity deleteById(Long id) {
+        Reservation reservation = new Reservation();
+        reservation.setId(id);
+        return delete(reservation);
     }
 
     private void updateOrganizationRating(Organization organization){
-//
-//        organization.setRating(organizationRatin);
-//        organizationRepository.save(organization);
-
-
+        Float rating = organizationRepository.getRating(organization.getId());
+        organization.setRating(rating);
+        organizationRepository.save(organization);
     }
 
 }
