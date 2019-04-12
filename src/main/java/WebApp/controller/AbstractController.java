@@ -1,10 +1,17 @@
 package WebApp.controller;
 
 import WebApp.entity.AbstractEntity;
+import WebApp.entity.User;
+import WebApp.entity.response.EntityResponse;
+import WebApp.repository.specifications.CommonSpecification;
+import WebApp.repository.specifications.CommonSpecificationBuilder;
 import WebApp.service.CommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AbstractController <E extends AbstractEntity, S extends CommonService<E>>{
 
@@ -21,9 +28,17 @@ public class AbstractController <E extends AbstractEntity, S extends CommonServi
     }
 
     @GetMapping()
-    public ResponseEntity<Iterable<E>> getAll(@RequestParam(value = "page", required = false) Integer page,
-                                              @RequestParam(value = "field" , required = false) String fieldForSort,
-                                              @RequestParam(value = "search", required = false) String search) {
+    public ResponseEntity<EntityResponse<E>> getAll(@RequestParam(value = "page", required = false) Integer page,
+                                                    @RequestParam(value = "field" , required = false) String fieldForSort,
+                                                    @RequestParam(value = "search", required = false) String search) {
+//        CommonSpecificationBuilder<E,CommonSpecification<E>> builder = new CommonSpecificationBuilder();
+//        Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
+//        Matcher matcher = pattern.matcher(search + ",");
+//        while (matcher.find()) {
+//            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+//        }
+//
+//        CommonSpecification<E> spec = (CommonSpecification<E>) builder.build();
         return service.getAll(page,fieldForSort);
     }
 

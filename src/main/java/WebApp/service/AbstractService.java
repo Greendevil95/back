@@ -2,6 +2,7 @@ package WebApp.service;
 
 import WebApp.entity.AbstractEntity;
 import WebApp.entity.User;
+import WebApp.entity.response.EntityResponse;
 import WebApp.repository.CommonRepository;
 import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-public abstract class AbstractService<E extends AbstractEntity, R extends CommonRepository<E>> implements CommonService<E> {
+public abstract class AbstractService<E extends AbstractEntity, R extends CommonRepository<E> > implements CommonService<E> {
 
     protected final R repository;
 
@@ -36,7 +37,7 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
     }
 
     @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<Iterable<E>> getAll(Integer page, String fieldForSort) {
+    public ResponseEntity<EntityResponse<E>> getAll(Integer page, String fieldForSort) {
         if (page == null){
             page = 0;
         }
@@ -44,7 +45,8 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
             fieldForSort = "id";
         }
         Pageable pageable = PageRequest.of(page, pageSize,Sort.by(fieldForSort));
-        return ResponseEntity.ok(repository.findAll(pageable).getContent());
+        return ResponseEntity.ok(new EntityResponse<E>(repository.findAll(pageable)));
+
     }
 
     @PreAuthorize("hasAuthority('USER')")
