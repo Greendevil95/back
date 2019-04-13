@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/organizations")
 public class OrganizationController extends AbstractController<Organization,OrganizationServiceImpl> {
-
     public OrganizationController(OrganizationServiceImpl service) {
         super(service);
     }
-
 }

@@ -1,17 +1,18 @@
 package WebApp.service;
 
 import WebApp.entity.Role;
+import WebApp.entity.State;
 import WebApp.entity.User;
 import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl extends AbstractService<User, UserRepository> implements UserService  {
@@ -23,66 +24,94 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @PreAuthorize("hasAuthority('USER')")
     @Override
-    public ResponseEntity getPrincipal(){
+    public ResponseEntity getAuthUser(){
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
-        User authUser = getByEmail(authUserName);
+        User authUser = userRepository.findByEmail(authUserName).get();
         return ResponseEntity.ok(authUser);
-}
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity getAuthUserId(){
+        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+        User authUser = userRepository.findByEmail(authUserName).get();
+        return ResponseEntity.ok(authUser.getId());
+    }
 
     @Override
     public ResponseEntity add(User user) {
         if (!userRepository.findByEmail(user.getEmail()).isPresent()) {
-            hashPass(user);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setRating(0);
             user.setRoles(Collections.singleton(Role.USER));
+            user.setStates(Collections.singleton(State.ACTIVE));
             userRepository.save(user);
             return ResponseEntity.ok("Registration user with email " + user.getEmail() + " successful!");
-        } else {
-            return ResponseEntity.badRequest().body("User with this email: " + user.getEmail()+ " already exists!");
-        }
+        } else return ResponseEntity.badRequest().body("User with email: " + user.getEmail()+ " already exists!");
     }
 
-    @Override
-    public ResponseEntity update(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()){
-            User updateUser = userRepository.findByEmail(user.getEmail()).get();
-            user.setId(updateUser.getId());
-            hashPass(user);
-            userRepository.save(user);
-            return ResponseEntity.ok("Data for user with email " + user.getEmail() + " was refreshing!");
-        } else return ResponseEntity.notFound().build();
-    }
-
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity updateById(Long id, User user) {
-        if (userRepository.findById(id).isPresent()) {
-            user.setId(id);
-            hashPass(user);
-            userRepository.save(user);
-            return ResponseEntity.ok("Your data was refreshing!");
-        } else return ResponseEntity.notFound().build();
+        if (id == null){
+            id = userRepository.findByEmail(user.getEmail()).get().getId();
+        }
+        Optional<User> updateUser = userRepository.findById(id);
+        if (!updateUser.isPresent()) {
+            return ResponseEntity.badRequest().body("User with this email: " + user.getEmail()+ " not found");
+        }
+        if (!isAuthUser(updateUser.get())){
+            ResponseEntity.badRequest().body("Its not you account.");
+        }
+
+        user.setId(updateUser.get().getId());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+        return ResponseEntity.ok("Data for user with email " + user.getEmail() + " was refreshing!");
     }
 
-   @Override
-    public User getByEmail(String email) {
-        User user;
-        user = userRepository.findByEmail(email).get();
-        return user;
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity update(User user) {
+        return updateById(user.getId(),user);
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity delete(User user){
-        if(userRepository.findByEmail(user.getEmail()).isPresent()){
-            userRepository.deleteByEmail(user.getEmail());
-            return ResponseEntity.ok("User with email "+ user.getEmail() + " was delete.");
-        }
-        else return ResponseEntity.notFound().build();
+        Optional<User> deleteUser = userRepository.findByEmail(user.getEmail());
+        if (deleteUser.isPresent()) {
+            return deleteById(deleteUser.get().getId());
+        } else return ResponseEntity.badRequest().body("User with email: " + deleteUser.get().getEmail()+ " not found");
     }
 
-    private void hashPass(User user){
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        String pass = user.getPassword();
-        user.setPassword(bCryptPasswordEncoder.encode(pass));
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity deleteById(Long id) {
+        Optional<User> deleteUser = userRepository.findById(id);
+        if(!deleteUser.isPresent()) {
+            return ResponseEntity.badRequest().body("User with email: " + deleteUser.get().getEmail()+ " not found");
+        }
+        if (!isAuthUser(deleteUser.get())){
+            return ResponseEntity.badRequest().body("Its not you account.");
+        }
+        userRepository.deleteById(id);
+
+        deleteUser.get().setStates(Collections.singleton(State.DELETE));
+        deleteUser.get().setOrganization(null);
+        deleteUser.get().setReservations(null);
+        userRepository.save(deleteUser.get());
+        return ResponseEntity.ok("User with email " + deleteUser.get().getEmail() + " was delete.");
     }
+
+//    @PreAuthorize("hasAuthority('USER')")
+//    public ResponseEntity<Iterable<User>> bySpec (UserSpecification userSpecification){
+//        return ResponseEntity.ok(userRepository.findAll(Specification.where(userSpecification)));
+//    }
 
 }

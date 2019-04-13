@@ -1,9 +1,9 @@
 package WebApp.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -14,11 +14,23 @@ public class User extends  AbstractEntity  {
     @Column(name = "email")
     private String email;
 
+    @JsonIgnore
     @Column(name = "password", nullable = true)
     private String password;
 
-    @Column(name = "verify",nullable = false)
-    private Boolean verify;
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "rating")
+    private float rating;
+
+    @ElementCollection(targetClass = State.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_state",joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<State> states;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
@@ -36,45 +48,14 @@ public class User extends  AbstractEntity  {
     public User()  {
     }
 
-    public User(String email, String password, Boolean verify, List<Organization> organization, List<Reservation> reservations, Set<Role> roles) {
+    public User(String email, String password, String name, String phone, Set<State> states, List<Organization> organization, List<Reservation> reservations, Set<Role> roles) {
         this.email = email;
         this.password = password;
-        this.verify = verify;
+        this.name = name;
+        this.phone = phone;
+        this.states = states;
         this.organization = organization;
         this.reservations = reservations;
-        this.roles = roles;
-    }
-
-    public User(String email, String password, Boolean verify, List<Organization> organization, List<Reservation> reservations) {
-        this.email = email;
-        this.password = password;
-        this.verify = verify;
-        this.organization = organization;
-        this.reservations = reservations;
-        this.roles = Collections.singleton(Role.USER);
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setVerify(Boolean verify) {
-        this.verify = verify;
-    }
-
-    public void setOrganization(List<Organization> organization) {
-        this.organization = organization;
-    }
-
-    public void setReservations(List<Reservation> reservations) {
-        this.reservations = reservations;
-    }
-
-    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 
@@ -82,12 +63,25 @@ public class User extends  AbstractEntity  {
         return email;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
-    public Boolean getVerify() {
-        return verify;
+    public String getName() {
+        return name;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public Set<State> getStates() {
+        return states;
     }
 
     public List<Organization> getOrganization() {
@@ -100,5 +94,42 @@ public class User extends  AbstractEntity  {
 
     public Set<Role> getRoles() {
         return roles;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @JsonProperty
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
+    }
+
+    public void setStates(Set<State> states) {
+        this.states = states;
+    }
+
+    public void setOrganization(List<Organization> organization) {
+        this.organization = organization;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }

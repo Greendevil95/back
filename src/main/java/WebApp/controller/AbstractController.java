@@ -1,6 +1,7 @@
 package WebApp.controller;
 
 import WebApp.entity.AbstractEntity;
+import WebApp.entity.response.EntityResponse;
 import WebApp.service.CommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +22,10 @@ public class AbstractController <E extends AbstractEntity, S extends CommonServi
     }
 
     @GetMapping()
-    public ResponseEntity<Iterable<E>> getAll() {
-        return service.getAll();
+    public ResponseEntity<EntityResponse<E>> getAll(@RequestParam(value = "page", required = false) Integer page,
+                                                    @RequestParam(value = "field" , required = false) String fieldForSort,
+                                                    @RequestParam(value = "search", required = false) String search) {
+        return service.getAll(page,fieldForSort,search);
     }
 
     @GetMapping("/{id}")

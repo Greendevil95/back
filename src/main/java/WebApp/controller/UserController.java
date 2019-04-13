@@ -1,7 +1,6 @@
 package WebApp.controller;
 
 import WebApp.entity.User;
-import WebApp.service.OrganizatioService;
 import WebApp.service.UserService;
 import WebApp.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/users")
@@ -23,12 +20,13 @@ public class UserController extends AbstractController<User,UserServiceImpl> {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    OrganizatioService organizatioService;
-
     @GetMapping("/auth")
-    public ResponseEntity<Iterable<User>> getPrincipal() {
-        return userService.getPrincipal();
+    public ResponseEntity<Iterable<User>> getAuthUser() {
+        return userService.getAuthUser();
     }
 
+    @GetMapping("/auth/id")
+    public ResponseEntity<Iterable<User>> getAuthUserId() {
+        return userService.getAuthUserId();
+    }
 }

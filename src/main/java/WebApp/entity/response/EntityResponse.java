@@ -1,0 +1,63 @@
+package WebApp.entity.response;
+
+import WebApp.entity.AbstractEntity;
+import org.springframework.data.domain.Page;
+
+public class EntityResponse<E extends AbstractEntity> {
+    private Integer totalPages;
+    private Integer size;
+    private Integer number;
+    private Integer numberOfElements;
+    private Iterable<E> content;
+
+    public EntityResponse(Page<E> page) {
+        totalPages = page.getTotalPages();
+        size = page.getSize();
+        number = page.getNumber();
+        numberOfElements = page.getNumberOfElements();
+        content = page.getContent();
+    }
+
+    public EntityResponse() {
+    }
+
+    public void setTotalPages(Integer totalPages) {
+        this.totalPages = totalPages;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
+    public void setNumberOfElements(Integer numberOfElements) {
+        this.numberOfElements = numberOfElements;
+    }
+
+    public void setContent(Iterable<E> content) {
+        this.content = content;
+    }
+
+    public Integer getTotalPages() {
+        return totalPages;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public Integer getNumber() {
+        return number;
+    }
+
+    public Integer getNumberOfElements() {
+        return numberOfElements;
+    }
+
+    public Iterable<E> getContent() {
+        return content;
+    }
+}

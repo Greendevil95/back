@@ -1,23 +1,18 @@
 package WebApp.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import javax.persistence.*;
 
 @Entity
-@Table(name = "reservation_list")
+@Table(name = "reservation")
 public class Reservation extends AbstractEntity {
 
-    @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "user_id")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "organization_id")
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "organization_id")
-    private Organization organization;
+    @JoinColumn(name = "service_id")
+    private Service service;
 
     @Column(name = "comment")
     private String comment;
@@ -28,35 +23,19 @@ public class Reservation extends AbstractEntity {
     public Reservation() {
     }
 
-    public Reservation(User user, Organization organization, String comment, float rating) {
+    public Reservation(User user, Service service, String comment, float rating) {
         this.user = user;
-        this.organization = organization;
+        this.service = service;
         this.comment = comment;
         this.rating = rating;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Organization getOrganization() {
-        return organization;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public float getRating() {
-        return rating;
     }
 
     public void setUser(User user) {
         this.user = user;
     }
 
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
+    public void setService(Service service) {
+        this.service = service;
     }
 
     public void setComment(String comment) {
@@ -65,5 +44,21 @@ public class Reservation extends AbstractEntity {
 
     public void setRating(float rating) {
         this.rating = rating;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Service getService() {
+        return service;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public float getRating() {
+        return rating;
     }
 }

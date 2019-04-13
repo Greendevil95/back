@@ -25,26 +25,29 @@ public class Organization extends AbstractEntity{
     @Column(name = "rating")
     private Float rating;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "organization")
-    private List<Reservation> reservations;
+    private List<Service> services ;
+
+    //    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="email")
+    //    @JsonIdentityReference(alwaysAsId=true)
+
 
     public Organization() {
     }
 
-    public Organization(String name, String address, String phoneNumber, String description, Float rating, User user, List<Reservation> reservations) {
+    public Organization(String name, String address, String phoneNumber, String description, Float rating, User user, List<Service> services) {
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.description = description;
         this.rating = rating;
         this.user = user;
-        this.reservations = reservations;
+        this.services = services;
     }
 
     public void setName(String name) {
@@ -71,8 +74,8 @@ public class Organization extends AbstractEntity{
         this.user = user;
     }
 
-    public void setReservations(List<Reservation> reservations) {
-        this.reservations = reservations;
+    public void setServices(List<Service> services) {
+        this.services = services;
     }
 
     public String getName() {
@@ -99,7 +102,7 @@ public class Organization extends AbstractEntity{
         return user;
     }
 
-    public List<Reservation> getReservations() {
-        return reservations;
+    public List<Service> getServices() {
+        return services;
     }
 }

@@ -1,4 +1,6 @@
 package WebApp.repository;
 
-public interface ReservationRepository extends CommonRepository {
+import WebApp.entity.Reservation;
+
+public interface ReservationRepository extends CommonRepository<Reservation> {
 }

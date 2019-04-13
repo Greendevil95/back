@@ -1,5 +1,6 @@
-package WebApp.security;
+package WebApp.security.Details;
 
+import WebApp.entity.State;
 import WebApp.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -7,22 +8,28 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-public class MyUserPrincipal implements UserDetails {
+public class UserDetailsImpl implements UserDetails {
 
 
     @Autowired
     private User user;
 
-    public MyUserPrincipal(User user) {
+    public UserDetailsImpl(User user) {
         this.user = user;
     }
 
+    private final Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        final List<SimpleGrantedAuthority> authorities = new java.util.ArrayList<SimpleGrantedAuthority>();
-       //authorities.add(new SimpleGrantedAuthority(user.getRoles().toString()));
+
+        for (GrantedAuthority role : user.getRoles()) {
+            authorities.add(new SimpleGrantedAuthority(role.getAuthority()));
+        }
         return authorities;
     }
 
@@ -43,7 +50,7 @@ public class MyUserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !user.getStates().equals(Collections.singleton(State.BANNED));
     }
 
     @Override
@@ -53,7 +60,7 @@ public class MyUserPrincipal implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user.getStates().equals(Collections.singleton(State.ACTIVE));
     }
 
     public User getUser() {
