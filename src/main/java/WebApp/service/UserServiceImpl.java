@@ -1,10 +1,12 @@
 package WebApp.service;
 
-import WebApp.entity.Role;
-import WebApp.entity.State;
-import WebApp.entity.User;
+import WebApp.entity.*;
+import WebApp.entity.response.EntityResponse;
+import WebApp.repository.OrganizationRepository;
+import WebApp.repository.ReservationRepository;
 import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +25,12 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private OrganizationRepository organizationRepository;
+
+    @Autowired
+    private ReservationRepository reservationRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -109,9 +117,50 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         return ResponseEntity.ok("User with email " + deleteUser.get().getEmail() + " was delete.");
     }
 
-//    @PreAuthorize("hasAuthority('USER')")
-//    public ResponseEntity<Iterable<User>> bySpec (UserSpecification userSpecification){
-//        return ResponseEntity.ok(userRepository.findAll(Specification.where(userSpecification)));
-//    }
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity<EntityResponse<Organization>> getOrganizationForUserId(Long id, Integer page, String fieldForSort, String search) {
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()){
+            return ResponseEntity.badRequest().build();
+        }
+        return getOrganizationForUser(user.get(),page,fieldForSort,search);
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity<EntityResponse<Organization>> getOrganizationForAuthUser(Integer page, String fieldForSort, String search) {
+        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> optionalAuthUser = userRepository.findByEmail(authUserName);
+        return getOrganizationForUser(optionalAuthUser.get(),page,fieldForSort,search);
+    }
+
+    private ResponseEntity<EntityResponse<Organization>> getOrganizationForUser(User user,Integer page, String fieldForSort, String search){
+        Pageable pageable = initPageable(page,fieldForSort,super.getPageSize());
+        return ResponseEntity.ok(new EntityResponse<Organization>(organizationRepository.findByUser(user,pageable)));
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity<EntityResponse<Reservation>> getReservationForUserById(Long id,Integer page, String fieldForSort, String search) {
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()){
+            return ResponseEntity.badRequest().build();
+        }
+        return getReservationForUser(user.get(),page,fieldForSort,search);
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity<EntityResponse<Reservation>> getReservationForAuthUser(Integer page, String fieldForSort, String search) {
+        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> optionalAuthUser = userRepository.findByEmail(authUserName);
+        return getReservationForUser(optionalAuthUser.get(),page,fieldForSort,search);
+    }
+
+    private ResponseEntity<EntityResponse<Reservation>> getReservationForUser(User user,Integer page, String fieldForSort, String search){
+        Pageable pageable = initPageable(page,fieldForSort,super.getPageSize());
+        return ResponseEntity.ok(new EntityResponse<Reservation>(reservationRepository.findByUser(user,pageable)));
+    }
 
 }
