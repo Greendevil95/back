@@ -1,12 +1,16 @@
 package WebApp.service;
 
 import WebApp.entity.Organization;
+import WebApp.entity.Reservation;
 import WebApp.entity.Service;
 import WebApp.entity.User;
+import WebApp.entity.response.EntityResponse;
 import WebApp.repository.OrganizationRepository;
+import WebApp.repository.ReservationRepository;
 import WebApp.repository.ServiceRepository;
 import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +32,9 @@ public class ServiceServiceImpl extends AbstractService<Service,ServiceRepositor
 
     @Autowired
     ServiceRepository serviceRepository;
+
+    @Autowired
+    ReservationRepository reservationRepository;
 
     @PreAuthorize("hasAuthority('USER')")
     @Override
@@ -101,5 +108,25 @@ public class ServiceServiceImpl extends AbstractService<Service,ServiceRepositor
         if (service.isPresent())
             return delete(serviceRepository.findById(id).get());
         else return ResponseEntity.badRequest().body("Service with id " + id + " not found");
+    }
+
+    @Override
+    public ResponseEntity<EntityResponse<Organization>> getOrganizationForServiceById(Long id, Integer page, String fieldForSort, String search) {
+        Optional<Service> service = serviceRepository.findById(id);
+        if (!service.isPresent()){
+            return ResponseEntity.badRequest().build();
+        }
+        Pageable pageable = initPageable(page,fieldForSort,super.getPageSize());
+        return ResponseEntity.ok(new EntityResponse<Organization>(organizationRepository.findByServices(service.get(),pageable)));
+    }
+
+    @Override
+    public ResponseEntity<EntityResponse<Reservation>> getReservationForServiceById(Long id, Integer page, String fieldForSort, String search) {
+        Optional<Service> service = serviceRepository.findById(id);
+        if (!service.isPresent()){
+            return ResponseEntity.badRequest().build();
+        }
+        Pageable pageable = initPageable(page,fieldForSort,super.getPageSize());
+        return ResponseEntity.ok(new EntityResponse<Reservation>(reservationRepository.findByService(service.get(),pageable)));
     }
 }

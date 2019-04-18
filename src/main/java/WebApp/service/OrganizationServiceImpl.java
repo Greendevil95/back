@@ -2,9 +2,12 @@ package WebApp.service;
 
 import WebApp.entity.Organization;
 import WebApp.entity.User;
+import WebApp.entity.response.EntityResponse;
 import WebApp.repository.OrganizationRepository;
+import WebApp.repository.ServiceRepository;
 import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +27,9 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
 
     @Autowired
     private OrganizationRepository organizationRepository;
+
+    @Autowired
+    private ServiceRepository serviceRepository;
 
     @PreAuthorize("hasAuthority('USER')")
     @Override
@@ -87,5 +93,25 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
     public ResponseEntity deleteById(Long id) {
         Organization deleteOrganization = organizationRepository.findById(id).get();
         return delete(deleteOrganization);
+    }
+
+    @Override
+    public ResponseEntity<EntityResponse<User>> getOwnerOrganization(Long id, Integer page, String fieldForSort, String search) {
+        Optional<Organization> organization = organizationRepository.findById(id);
+        if (!organization.isPresent()){
+            return ResponseEntity.badRequest().build();
+        }
+        Pageable pageable = initPageable(page,fieldForSort,super.getPageSize());
+        return ResponseEntity.ok(new EntityResponse<User>(userRepository.findByOrganization(organization.get(),pageable)));
+    }
+
+    @Override
+    public ResponseEntity<EntityResponse<WebApp.entity.Service>> getServicesForOrganizationById(Long id, Integer page, String fieldForSort, String search) {
+        Optional<Organization> organization = organizationRepository.findById(id);
+        if (!organization.isPresent()){
+            return ResponseEntity.badRequest().build();
+        }
+        Pageable pageable = initPageable(page,fieldForSort,super.getPageSize());
+        return ResponseEntity.ok(new EntityResponse<WebApp.entity.Service>(serviceRepository.findByOrganization(organization.get(),pageable)));
     }
 }

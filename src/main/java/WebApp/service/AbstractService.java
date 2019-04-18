@@ -29,6 +29,10 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
 
     private static int pageSize = 10 ;
 
+    public static void setPageSize(int pageSize) {
+        AbstractService.pageSize = pageSize;
+    }
+
     public static int getPageSize() {
         return pageSize;
     }
@@ -43,25 +47,11 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
 
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<EntityResponse<E>> getAll(Integer page, String fieldForSort, String search) {
-        if (page == null){
-            page = 0;
-        }
-        if (fieldForSort == null) {
-            fieldForSort = "id";
-        }
 
-        CommonSpecificationBuilder<E> builder = new CommonSpecificationBuilder();
-        Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
-        Matcher matcher = pattern.matcher(search + ",");
-        while (matcher.find()) {
-            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-        }
-        Specification<E> specification =  builder.build();
-
-        Pageable pageable = PageRequest.of(page, pageSize,Sort.by(fieldForSort));
+        Specification<E> specification = initSpecification(search);
+        Pageable pageable = initPageable(page,fieldForSort,pageSize);
 
         return ResponseEntity.ok(new EntityResponse<E>(repository.findAll(specification, pageable)));
-
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -79,5 +69,26 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
     public boolean isAuthUser(User user){
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
         return (user.equals(userRepository.findByEmail(authUserName).get()));
+    }
+
+    protected Specification<E> initSpecification(String search){
+        CommonSpecificationBuilder<E> builder = new CommonSpecificationBuilder();
+        Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
+        Matcher matcher = pattern.matcher(search + ",");
+        while (matcher.find()) {
+            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+        }
+        Specification<E> specification =  builder.build();
+        return  specification;
+    }
+
+    protected Pageable initPageable(Integer page, String fieldForSort, int pageSize){
+        if (page == null){
+            page = 0;
+        }
+        if (fieldForSort == null) {
+            fieldForSort = "id";
+        }
+        return PageRequest.of(page, pageSize,Sort.by(fieldForSort));
     }
 }

@@ -3,11 +3,13 @@ package WebApp.service;
 import WebApp.entity.Organization;
 import WebApp.entity.Reservation;
 import WebApp.entity.User;
+import WebApp.entity.response.EntityResponse;
 import WebApp.repository.OrganizationRepository;
 import WebApp.repository.ReservationRepository;
 import WebApp.repository.ServiceRepository;
 import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -130,6 +132,26 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
         Float rating = organizationRepository.getRating(organization.getId());
         organization.setRating(rating);
         organizationRepository.save(organization);
+    }
+
+    @Override
+    public ResponseEntity<EntityResponse<User>> getOwnerReservation(Long id, Integer page, String fieldForSort, String search) {
+        Optional<Reservation> reservation = reservationRepository.findById(id);
+        if(!reservation.isPresent()){
+            return ResponseEntity.badRequest().build();
+        }
+        Pageable pageable = initPageable(page,fieldForSort,super.getPageSize());
+        return ResponseEntity.ok(new EntityResponse<User>(userRepository.findByReservations(reservation.get(),pageable)));
+    }
+
+    @Override
+    public ResponseEntity<EntityResponse<WebApp.entity.Service>> getServiceForReservation(Long id, Integer page, String fieldForSort, String search) {
+        Optional<Reservation> reservation = reservationRepository.findById(id);
+        if(!reservation.isPresent()){
+            return ResponseEntity.badRequest().build();
+        }
+        Pageable pageable = initPageable(page,fieldForSort,super.getPageSize());
+        return ResponseEntity.ok(new EntityResponse<WebApp.entity.Service>(serviceRepository.findByReservations(reservation.get(),pageable)));
     }
 
 }
