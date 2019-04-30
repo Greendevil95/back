@@ -2,6 +2,7 @@ package WebApp.service;
 
 import WebApp.entity.Organization;
 import WebApp.entity.Reservation;
+import WebApp.entity.ReservationStatus;
 import WebApp.entity.User;
 import WebApp.entity.response.EntityResponse;
 import WebApp.repository.OrganizationRepository;
@@ -15,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -55,6 +57,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
 
         reservation.setUser(authUser);
         reservation.setRating(0);
+        reservation.setStatus(Collections.singleton(ReservationStatus.INPROCESS));
         reservationRepository.save(reservation);
 
         return ResponseEntity.ok("User with username " + authUserName + "reserved to service with id =  " + reservation.getService().getId());
@@ -134,6 +137,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
         organizationRepository.save(organization);
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity<EntityResponse<User>> getOwnerReservation(Long id, Integer page, String fieldForSort, String search) {
         Optional<Reservation> reservation = reservationRepository.findById(id);
@@ -144,6 +148,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
         return ResponseEntity.ok(new EntityResponse<User>(userRepository.findByReservations(reservation.get(),pageable)));
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity<EntityResponse<WebApp.entity.Service>> getServiceForReservation(Long id, Integer page, String fieldForSort, String search) {
         Optional<Reservation> reservation = reservationRepository.findById(id);
@@ -154,4 +159,26 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
         return ResponseEntity.ok(new EntityResponse<WebApp.entity.Service>(serviceRepository.findByReservations(reservation.get(),pageable)));
     }
 
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity setStatus(Reservation reservation) {
+
+        Optional<Reservation> thisReservatio = reservationRepository.findById(reservation.getId());
+
+        if (!thisReservatio.isPresent()){
+            return ResponseEntity.badRequest().body("Reservation with id " + reservation.getId() + " not found." );
+        }
+
+        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> authUser = userRepository.findByEmail(authUserName);
+        Organization organization = thisReservatio.get().getService().getOrganization();
+        if (!authUser.get().equals(organization.getUser())){
+            return ResponseEntity.badRequest().body("Its reservation not for you organization. ");
+        }
+
+        thisReservatio.get().setStatus(reservation.getStatus());
+        reservationRepository.save(thisReservatio.get());
+        return ResponseEntity.ok().body("Status changed.");
+
+    }
 }

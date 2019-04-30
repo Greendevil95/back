@@ -11,4 +11,5 @@ public interface ReservationService extends CommonService<Reservation> {
     ResponseEntity addRating(Reservation reservation);
     ResponseEntity<EntityResponse<User>> getOwnerReservation(Long id, Integer page, String fieldForSort, String search);
     ResponseEntity<EntityResponse<WebApp.entity.Service>> getServiceForReservation(Long id, Integer page, String fieldForSort, String search);
+    ResponseEntity setStatus(Reservation reservation);
 }
