@@ -87,16 +87,20 @@ public class ServiceServiceImpl extends AbstractService<Service,ServiceRepositor
     public ResponseEntity delete(Service service) {
 
         Optional<Service> serviceForDelete = serviceRepository.findById(service.getId());
-        if (serviceForDelete == null)
+        if (serviceForDelete == null) {
             return ResponseEntity.badRequest().body("Service with id " + service.getId() + " not found");
+        }
 
         String authUserName =SecurityContextHolder.getContext().getAuthentication().getName();
         User authUser = userRepository.findByEmail(authUserName).get();
         Organization serviceForOrganization = organizationRepository.findById(serviceForDelete.get().getOrganization().getId()).get();
 
-        if (!serviceForOrganization.getUser().equals(authUser))
+        if (!serviceForOrganization.getUser().equals(authUser)) {
             return ResponseEntity.badRequest().body("This is not your organization.");
-
+        }
+        if (serviceForDelete.get().getReservations()!=null){
+            return ResponseEntity.badRequest().body("Service with id " + service.getId() + " have reservation.");
+        }
         serviceRepository.deleteById(service.getId());
         return ResponseEntity.ok("Service with id " + service.getId() + " was deleted.");
     }
