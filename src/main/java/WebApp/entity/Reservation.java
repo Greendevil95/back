@@ -1,6 +1,7 @@
 package WebApp.entity;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "reservation")
@@ -17,16 +18,22 @@ public class Reservation extends AbstractEntity {
     @Column(name = "comment")
     private String comment;
 
+    @ElementCollection(targetClass = ReservationStatus.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "reservation_status",joinColumns = @JoinColumn(name = "reservation_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<ReservationStatus> status;
+
     @Column(name = "rating")
     private float rating;
 
     public Reservation() {
     }
 
-    public Reservation(User user, Service service, String comment, float rating) {
+    public Reservation(User user, Service service, String comment, Set<ReservationStatus> status, float rating) {
         this.user = user;
         this.service = service;
         this.comment = comment;
+        this.status = status;
         this.rating = rating;
     }
 
@@ -40,6 +47,10 @@ public class Reservation extends AbstractEntity {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public void setStatus(Set<ReservationStatus> status) {
+        this.status = status;
     }
 
     public void setRating(float rating) {
@@ -56,6 +67,10 @@ public class Reservation extends AbstractEntity {
 
     public String getComment() {
         return comment;
+    }
+
+    public Set<ReservationStatus> getStatus() {
+        return status;
     }
 
     public float getRating() {
