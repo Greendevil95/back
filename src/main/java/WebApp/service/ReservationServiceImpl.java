@@ -98,6 +98,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
         reservation.setUser(updateReservation.get().getUser());
         reservation.setService(updateReservation.get().getService());
         reservationRepository.save(reservation);
+        updateServiceRating(reservation.getService());
         updateOrganizationRating(reservation.getService().getOrganization());
         return ResponseEntity.ok("Reservation with id " + reservation.getId() + " was update");
     }
@@ -131,8 +132,16 @@ public class ReservationServiceImpl extends AbstractService<Reservation,Reservat
         return delete(reservation);
     }
 
+    private void updateServiceRating(WebApp.entity.Service service){
+        float rating = serviceRepository.getRating(service.getId());
+        rating = (float) (Math.ceil(rating*10)*10);
+        service.setRating(rating);
+        serviceRepository.save(service);
+    }
+
     private void updateOrganizationRating(Organization organization){
-        Float rating = organizationRepository.getRating(organization.getId());
+        float rating = organizationRepository.getRating(organization.getId());
+        rating = (float) (Math.ceil(rating*10)*10);
         organization.setRating(rating);
         organizationRepository.save(organization);
     }
