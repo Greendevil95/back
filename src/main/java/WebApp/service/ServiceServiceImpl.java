@@ -48,6 +48,7 @@ public class ServiceServiceImpl extends AbstractService<Service,ServiceRepositor
 
         service.setOrganization(serviceForOrganization);
         service.setReservations(null);
+        service.setTime(60);
         service.setRating((float) 0);
         serviceRepository.save(service);
         return ResponseEntity.ok().body("Service for organization " + serviceForOrganization.getName() + " added.");
