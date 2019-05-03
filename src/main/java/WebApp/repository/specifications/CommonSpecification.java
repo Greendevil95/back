@@ -3,10 +3,8 @@ package WebApp.repository.specifications;
 import WebApp.entity.AbstractEntity;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
+import java.util.Arrays;
 
 public class CommonSpecification<E extends AbstractEntity> implements Specification<E> {
 
@@ -19,22 +17,36 @@ public class CommonSpecification<E extends AbstractEntity> implements Specificat
     @Override
     public Predicate toPredicate(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
 
+        Path path = getPath(root,criteria.getKey());
+
+
         if (criteria.getOperation().equalsIgnoreCase(">")) {
             return builder.greaterThanOrEqualTo(
-                    root.<String> get(criteria.getKey()), criteria.getValue().toString());
+                    path, criteria.getValue().toString());
         }
         else if (criteria.getOperation().equalsIgnoreCase("<")) {
             return builder.lessThanOrEqualTo(
-                    root.<String> get(criteria.getKey()), criteria.getValue().toString());
+                    path, criteria.getValue().toString());
         }
         else if (criteria.getOperation().equalsIgnoreCase(":")) {
-            if (root.get(criteria.getKey()).getJavaType() == String.class) {
+            if (path.getJavaType() == String.class) {
                 return builder.like(
-                        root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");
+                        path, "%" + criteria.getValue() + "%");
             } else {
-                return builder.equal(root.get(criteria.getKey()), criteria.getValue());
+                return builder.equal(path, criteria.getValue());
             }
         }
         return null;
     }
+
+    private Path getPath(Path path, String key) {
+        String[] fieldNames = key.split("\\.");
+        System.out.println(Arrays.toString(fieldNames));
+        for (String field : fieldNames) {
+            path = path.get(field);
+        }
+
+        return path;
+    }
+
 }
