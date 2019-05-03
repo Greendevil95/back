@@ -4,6 +4,7 @@ package WebApp.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -25,6 +26,12 @@ public class Organization extends AbstractEntity{
     @Column(name = "rating")
     private Float rating;
 
+    @Column(name = "start_time")
+    private LocalTime startTime;
+
+    @Column(name = "finish_time")
+    private LocalTime finishTime;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
@@ -40,12 +47,14 @@ public class Organization extends AbstractEntity{
     public Organization() {
     }
 
-    public Organization(String name, String address, String phoneNumber, String description, Float rating, User user, List<Service> services) {
+    public Organization(String name, String address, String phoneNumber, String description, Float rating, LocalTime startTime, LocalTime finishTime, User user, List<Service> services) {
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.description = description;
         this.rating = rating;
+        this.startTime = startTime;
+        this.finishTime = finishTime;
         this.user = user;
         this.services = services;
     }
@@ -68,6 +77,14 @@ public class Organization extends AbstractEntity{
 
     public void setRating(Float rating) {
         this.rating = rating;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setFinishTime(LocalTime finishTime) {
+        this.finishTime = finishTime;
     }
 
     public void setUser(User user) {
@@ -96,6 +113,14 @@ public class Organization extends AbstractEntity{
 
     public Float getRating() {
         return rating;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalTime getFinishTime() {
+        return finishTime;
     }
 
     public User getUser() {

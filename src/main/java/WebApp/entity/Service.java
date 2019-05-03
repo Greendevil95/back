@@ -17,6 +17,9 @@ public class Service extends AbstractEntity{
     @Column(name = "description")
     private String description;
 
+    @Column(name = "time")
+    private Integer time;
+
     @Column(name = "rating")
     private Float rating;
 
@@ -31,9 +34,10 @@ public class Service extends AbstractEntity{
     public Service() {
     }
 
-    public Service(String description, Organization organization, List<Reservation> reservations) {
+    public Service(String description, Organization organization, Integer time, List<Reservation> reservations) {
         this.description = description;
         this.organization = organization;
+        this.time = time;
         this.reservations = reservations;
     }
 
@@ -47,6 +51,10 @@ public class Service extends AbstractEntity{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setTime(Integer time) {
+        this.time = time;
     }
 
     public void setRating(Float rating) {
@@ -71,6 +79,10 @@ public class Service extends AbstractEntity{
 
     public String getDescription() {
         return description;
+    }
+
+    public Integer getTime() {
+        return time;
     }
 
     public Float getRating() {

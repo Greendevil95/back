@@ -6,6 +6,7 @@ import WebApp.entity.response.EntityResponse;
 import WebApp.repository.OrganizationRepository;
 import WebApp.repository.ServiceRepository;
 import WebApp.repository.UserRepository;
+import WebApp.service.forStatistics.OrganizationStatistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.Optional;
 
 @Service
@@ -39,6 +41,8 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
         Optional optionalAuthUser = userRepository.findByEmail(authUserName);
 
         organization.setUser((User) optionalAuthUser.get());
+        organization.setStartTime(LocalTime.of(8,0));
+        organization.setFinishTime(LocalTime.of(17,0));
         organization.setRating((float) 0);
         organizationRepository.save(organization);
         return ResponseEntity.ok("Organization with name " + organization.getName() + " added for user with id " + ((User) optionalAuthUser.get()).getId());
@@ -80,12 +84,16 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
 
         if (!organizationRepository.findById(organizationId).isPresent()) {
-            ResponseEntity.badRequest().body("Organization with id " + organizationId + " not found.");
+            return ResponseEntity.badRequest().body("Organization with id " + organizationId + " not found.");
         }
-        if (isAuthUser(organizationRepository.findById(organizationId).get().getUser())) {
-            organizationRepository.deleteById(organizationId);
-            return ResponseEntity.ok("Organization with id " + organizationId + "was delete.");
-        } else return ResponseEntity.badRequest().body("This is not your organization.");
+        if (!isAuthUser(organizationRepository.findById(organizationId).get().getUser())) {
+            return ResponseEntity.badRequest().body("This is not your organization.");
+        }
+        if (organizationRepository.findById(organizationId).get().getServices()!=null) {
+            return ResponseEntity.badRequest().body("Organization with id " + organizationId + " have service. ");
+        }
+        organizationRepository.deleteById(organizationId);
+        return ResponseEntity.ok("Organization with id " + organizationId + "was delete.");
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -95,6 +103,7 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
         return delete(deleteOrganization);
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity<EntityResponse<User>> getOwnerOrganization(Long id, Integer page, String fieldForSort, String search) {
         Optional<Organization> organization = organizationRepository.findById(id);
@@ -105,6 +114,7 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
         return ResponseEntity.ok(new EntityResponse<User>(userRepository.findByOrganization(organization.get(),pageable)));
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity<EntityResponse<WebApp.entity.Service>> getServicesForOrganizationById(Long id, Integer page, String fieldForSort, String search) {
         Optional<Organization> organization = organizationRepository.findById(id);
@@ -113,5 +123,18 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
         }
         Pageable pageable = initPageable(page,fieldForSort,super.getPageSize());
         return ResponseEntity.ok(new EntityResponse<WebApp.entity.Service>(serviceRepository.findByOrganization(organization.get(),pageable)));
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity<OrganizationStatistics> getStatisticsById(Long id) {
+        Optional<Organization> thisOrganization = organizationRepository.findById(id);
+        if (!thisOrganization.isPresent()){
+            return ResponseEntity.badRequest().build();
+        }
+        OrganizationStatistics statistics = new OrganizationStatistics(thisOrganization.get());
+
+        statistics.setCountSuccsesReservation(0);
+        return ResponseEntity.ok(statistics);
     }
 }
