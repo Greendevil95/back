@@ -1,6 +1,7 @@
 package WebApp.entity;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -26,15 +27,23 @@ public class Reservation extends AbstractEntity {
     @Column(name = "rating")
     private float rating;
 
+    @Column(name = "date")
+    private LocalDate date;
+
+    @Column(name = "count_reservation")
+    private Integer countReservation;
+
     public Reservation() {
     }
 
-    public Reservation(User user, Service service, String comment, Set<ReservationStatus> status, float rating) {
+    public Reservation(User user, Service service, String comment, Set<ReservationStatus> status, float rating, LocalDate date, Integer countReservation) {
         this.user = user;
         this.service = service;
         this.comment = comment;
         this.status = status;
         this.rating = rating;
+        this.date = date;
+        this.countReservation = countReservation;
     }
 
     public void setUser(User user) {
@@ -57,6 +66,14 @@ public class Reservation extends AbstractEntity {
         this.rating = rating;
     }
 
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setCountReservation(Integer countReservation) {
+        this.countReservation = countReservation;
+    }
+
     public User getUser() {
         return user;
     }
@@ -75,5 +92,13 @@ public class Reservation extends AbstractEntity {
 
     public float getRating() {
         return rating;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public Integer getCountReservation() {
+        return countReservation;
     }
 }
