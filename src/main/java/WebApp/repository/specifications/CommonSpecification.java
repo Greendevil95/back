@@ -31,7 +31,8 @@ public class CommonSpecification<E extends AbstractEntity> implements Specificat
         else if (criteria.getOperation().equalsIgnoreCase(":")) {
             if (path.getJavaType() == String.class) {
                 return builder.like(
-                        path, "%" + criteria.getValue() + "%");
+                        builder.lower(path), "%" + criteria.getValue() + "%"
+                );
             } else {
                 return builder.equal(path, criteria.getValue());
             }
@@ -41,7 +42,6 @@ public class CommonSpecification<E extends AbstractEntity> implements Specificat
 
     private Path getPath(Path path, String key) {
         String[] fieldNames = key.split("\\.");
-        System.out.println(Arrays.toString(fieldNames));
         for (String field : fieldNames) {
             path = path.get(field);
         }

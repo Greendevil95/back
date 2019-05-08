@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,8 +88,15 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
             page = 0;
         }
         if (fieldForSort == null) {
-            fieldForSort = "id";
+            fieldForSort = "id.ask";
         }
-        return PageRequest.of(page, pageSize,Sort.by(fieldForSort));
+        String[] properties = fieldForSort.split("\\.");
+
+        if (properties[1].toLowerCase().equals("desc")) {
+            return PageRequest.of(page, pageSize, Sort.Direction.DESC, properties[0]);
+        }
+        else{
+            return PageRequest.of(page, pageSize, Sort.Direction.ASC, properties[0]);
+        }
     }
 }
