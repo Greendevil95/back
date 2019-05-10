@@ -80,7 +80,10 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         }
 
         user.setId(updateUser.get().getId());
-        user.setEmail(updateUser.get().getEmail());
+        if (user.getEmail()==null){
+            user.setEmail(updateUser.get().getEmail());
+        }
+
         if (user.getPassword()!=null) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         } else {
@@ -88,6 +91,7 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         }
         user.setReservations(updateUser.get().getReservations());
         user.setOrganization(updateUser.get().getOrganization());
+        user.setStates(updateUser.get().getStates());
         user.setRoles(updateUser.get().getRoles());
         user.setRating(updateUser.get().getRating());
         userRepository.save(user);
