@@ -67,18 +67,29 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     @Override
     public ResponseEntity updateById(Long id, User user) {
         if (id == null){
-            id = userRepository.findByEmail(user.getEmail()).get().getId();
+//            String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+//            id = userRepository.findByEmail(authUserName).get().getId();
+            return ResponseEntity.badRequest().body("Id is null.");
         }
         Optional<User> updateUser = userRepository.findById(id);
         if (!updateUser.isPresent()) {
-            return ResponseEntity.badRequest().body("User with this email: " + user.getEmail()+ " not found");
+            return ResponseEntity.badRequest().body("User with id " + id + " not found");
         }
         if (!isAuthUser(updateUser.get())){
             ResponseEntity.badRequest().body("Its not you account.");
         }
 
         user.setId(updateUser.get().getId());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setEmail(updateUser.get().getEmail());
+        if (user.getPassword()!=null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        } else {
+            user.setPassword(updateUser.get().getPassword());
+        }
+        user.setReservations(updateUser.get().getReservations());
+        user.setOrganization(updateUser.get().getOrganization());
+        user.setRoles(updateUser.get().getRoles());
+        user.setRating(updateUser.get().getRating());
         userRepository.save(user);
         return ResponseEntity.ok("Data for user with email " + user.getEmail() + " was refreshing!");
     }
