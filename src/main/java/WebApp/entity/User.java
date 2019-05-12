@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "usr")
-public class User extends  AbstractEntity  {
+public class User extends AbstractEntity {
 
     @Column(name = "email")
     private String email;
@@ -28,7 +28,7 @@ public class User extends  AbstractEntity  {
     private float rating;
 
     @ElementCollection(targetClass = State.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_state",joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_state", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<State> states;
 
@@ -41,11 +41,11 @@ public class User extends  AbstractEntity  {
     private List<Reservation> reservations;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_role",joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-    public User()  {
+    public User() {
     }
 
     public User(String email, String password, String name, String phone, Set<State> states, List<Organization> organization, List<Reservation> reservations, Set<Role> roles) {
@@ -63,41 +63,13 @@ public class User extends  AbstractEntity  {
         return email;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @JsonIgnore
     public String getPassword() {
         return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public float getRating() {
-        return rating;
-    }
-
-    public Set<State> getStates() {
-        return states;
-    }
-
-    public List<Organization> getOrganization() {
-        return organization;
-    }
-
-    public List<Reservation> getReservations() {
-        return reservations;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     @JsonProperty
@@ -105,28 +77,56 @@ public class User extends  AbstractEntity  {
         this.password = password;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPhone() {
+        return phone;
     }
 
     public void setPhone(String phone) {
         this.phone = phone;
     }
 
+    public float getRating() {
+        return rating;
+    }
+
     public void setRating(float rating) {
         this.rating = rating;
+    }
+
+    public Set<State> getStates() {
+        return states;
     }
 
     public void setStates(Set<State> states) {
         this.states = states;
     }
 
+    public List<Organization> getOrganization() {
+        return organization;
+    }
+
     public void setOrganization(List<Organization> organization) {
         this.organization = organization;
     }
 
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
     }
 
     public void setRoles(Set<Role> roles) {

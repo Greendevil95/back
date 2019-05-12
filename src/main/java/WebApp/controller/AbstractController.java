@@ -23,9 +23,10 @@ public class AbstractController <E extends AbstractEntity, S extends CommonServi
 
     @GetMapping()
     public ResponseEntity<EntityResponse<E>> getAll(@RequestParam(value = "page", required = false) Integer page,
+                                                    @RequestParam(value = "pagesize", required = false) Integer pageSize,
                                                     @RequestParam(value = "field" , required = false) String fieldForSort,
                                                     @RequestParam(value = "search", required = false) String search) {
-        return service.getAll(page,fieldForSort,search);
+        return service.getAll(page,pageSize,fieldForSort,search);
     }
 
     @GetMapping("/{id}")

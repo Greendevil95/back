@@ -21,43 +21,43 @@ public class EntityResponse<E extends AbstractEntity> {
     public EntityResponse() {
     }
 
-    public void setTotalPages(Integer totalPages) {
-        this.totalPages = totalPages;
-    }
-
-    public void setSize(Integer size) {
-        this.size = size;
-    }
-
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
-
-    public void setNumberOfElements(Integer numberOfElements) {
-        this.numberOfElements = numberOfElements;
-    }
-
-    public void setContent(Iterable<E> content) {
-        this.content = content;
-    }
-
     public Integer getTotalPages() {
         return totalPages;
+    }
+
+    public void setTotalPages(Integer totalPages) {
+        this.totalPages = totalPages;
     }
 
     public Integer getSize() {
         return size;
     }
 
+    public void setSize(Integer size) {
+        this.size = size;
+    }
+
     public Integer getNumber() {
         return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
     public Integer getNumberOfElements() {
         return numberOfElements;
     }
 
+    public void setNumberOfElements(Integer numberOfElements) {
+        this.numberOfElements = numberOfElements;
+    }
+
     public Iterable<E> getContent() {
         return content;
+    }
+
+    public void setContent(Iterable<E> content) {
+        this.content = content;
     }
 }

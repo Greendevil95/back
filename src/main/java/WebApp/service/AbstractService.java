@@ -18,23 +18,24 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AbstractService<E extends AbstractEntity, R extends CommonRepository<E> > implements CommonService<E> {
+public abstract class AbstractService<E extends AbstractEntity, R extends CommonRepository<E>> implements CommonService<E> {
 
+    private static int constPageSize = 10;
     protected final R repository;
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     public AbstractService(R repository) {
         this.repository = repository;
     }
 
-    private static int pageSize = 10 ;
-
-    public static void setPageSize(int pageSize) {
-        AbstractService.pageSize = pageSize;
+    public static int getPageSize() {
+        return constPageSize;
     }
 
-    public static int getPageSize() {
-        return pageSize;
+    public static void setPageSize(int pageSize) {
+        AbstractService.constPageSize = pageSize;
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -46,49 +47,54 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
     }
 
     @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<EntityResponse<E>> getAll(Integer page, String fieldForSort, String search) {
+    public ResponseEntity<EntityResponse<E>> getAll(Integer page, Integer pageSize, String fieldForSort, String search) {
 
         Specification<E> specification = initSpecification(search);
-        Pageable pageable = initPageable(page,fieldForSort,pageSize);
+        Pageable pageable = initPageable(page, fieldForSort, pageSize);
 
         return ResponseEntity.ok(new EntityResponse<E>(repository.findAll(specification, pageable)));
     }
 
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity deleteById(Long id) {
-        if(repository.findById(id).isPresent()){
+        if (repository.findById(id).isPresent()) {
             repository.deleteById(id);
             return ResponseEntity.ok("Object with id " + id + " was delete.");
-        }
-        else return ResponseEntity.notFound().build();
+        } else return ResponseEntity.notFound().build();
     }
 
-    @Autowired
-    UserRepository userRepository;
-
-    public boolean isAuthUser(User user){
+    public boolean isAuthUser(User user) {
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
         return (user.equals(userRepository.findByEmail(authUserName).get()));
     }
 
-    protected Specification<E> initSpecification(String search){
+    protected Specification<E> initSpecification(String search) {
         CommonSpecificationBuilder<E> builder = new CommonSpecificationBuilder();
         Pattern pattern = Pattern.compile("(\\w|.+?)(:|<|>)(?U)(\\w+?),");
         Matcher matcher = pattern.matcher(search + ",");
         while (matcher.find()) {
             builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
         }
-        Specification<E> specification =  builder.build();
-        return  specification;
+        Specification<E> specification = builder.build();
+        return specification;
     }
 
-    protected Pageable initPageable(Integer page, String fieldForSort, int pageSize){
-        if (page == null){
+    protected Pageable initPageable(Integer page, String fieldForSort, Integer pageSize) {
+        if (page == null) {
             page = 0;
         }
         if (fieldForSort == null) {
-            fieldForSort = "id";
+            fieldForSort = "id.ask";
         }
-        return PageRequest.of(page, pageSize,Sort.by(fieldForSort));
+        if (pageSize == null) {
+            pageSize = constPageSize;
+        }
+        String[] properties = fieldForSort.split("\\.");
+
+        if (properties[1].toLowerCase().equals("desc")) {
+            return PageRequest.of(page, pageSize, Sort.Direction.DESC, properties[0]);
+        } else {
+            return PageRequest.of(page, pageSize, Sort.Direction.ASC, properties[0]);
+        }
     }
 }

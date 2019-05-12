@@ -11,27 +11,27 @@ public class OrganizationStatistics {
         this.organization = organization;
     }
 
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
-    }
-
-    public void setCountSuccsesReservation(Integer countSuccsesReservation) {
-        this.countSuccsesReservation = countSuccsesReservation;
-    }
-
-    public void setRating(Float rating) {
-        this.rating = rating;
-    }
-
     public Organization getOrganization() {
         return organization;
+    }
+
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
     }
 
     public Integer getCountSuccsesReservation() {
         return countSuccsesReservation;
     }
 
+    public void setCountSuccsesReservation(Integer countSuccsesReservation) {
+        this.countSuccsesReservation = countSuccsesReservation;
+    }
+
     public Float getRating() {
         return rating;
+    }
+
+    public void setRating(Float rating) {
+        this.rating = rating;
     }
 }
