@@ -33,17 +33,19 @@ public class ServiceServiceImpl extends AbstractService<Service, ServiceReposito
     @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity add(Service service) {
-        Organization serviceForOrganization = organizationRepository.findById(service.getOrganization().getId()).get();
-        if (!isAuthUser(serviceForOrganization.getUser())) {
+        Organization organizationWithService = organizationRepository.findById(service.getOrganization().getId()).get();
+        if (!isAuthUser(organizationWithService.getUser())) {
             return ResponseEntity.badRequest().body("This is not your organization.");
         }
 
-        service.setOrganization(serviceForOrganization);
+        service.setOrganization(organizationWithService);
         service.setReservations(null);
-        service.setTime(60);
+        if (service.getTime() == null) {
+            service.setTime(60);
+        }
         service.setRating((float) 0);
         serviceRepository.save(service);
-        return ResponseEntity.ok().body("Service for organization " + serviceForOrganization.getName() + " added.");
+        return ResponseEntity.ok().body("Service for organization " + organizationWithService.getName() + " added.");
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -107,6 +109,7 @@ public class ServiceServiceImpl extends AbstractService<Service, ServiceReposito
         else return ResponseEntity.badRequest().body("Service with id " + id + " not found");
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity<Optional<Organization>> getOrganizationForServiceById(Long id) {
         Optional<Service> service = serviceRepository.findById(id);

@@ -190,6 +190,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
 
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity<EntityResponse<Reservation>> getReservationForServiceByIdStatus(Long id, Integer page, Integer pageSize, String fieldForSort, String status) {
         Pageable pageable = initPageable(page, fieldForSort, pageSize);
@@ -200,6 +201,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
         return ResponseEntity.ok(new EntityResponse<Reservation>(reservationRepository.findByServiceAndStatus(service.get(), ReservationStatus.get(status), pageable)));
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity getReservationForServiceByIdStatusCount(Long id, String status) {
         if (status == null) {

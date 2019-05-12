@@ -47,16 +47,16 @@ public class ServiceController extends AbstractController<Service, ServiceServic
                                                                                           @RequestParam(value = "page", required = false) Integer page,
                                                                                           @RequestParam(value = "pagesize", required = false) Integer pageSize,
                                                                                           @RequestParam(value = "field", required = false) String fieldForSort,
-                                                                                          @RequestParam(value = "search", required = false) String search) {
+                                                                                          @RequestParam(value = "status", required = false) String status) {
 
-        return reservationService.getReservationForServiceByIdStatus(id, page, pageSize, fieldForSort, search);
+        return reservationService.getReservationForServiceByIdStatus(id, page, pageSize, fieldForSort, status);
     }
 
     @GetMapping("/{id}/reservations/status/count")
     public ResponseEntity<EntityResponse<Reservation>> getReservationForServiceByIdStatus(@PathVariable(value = "id") Long id,
-                                                                                          @RequestParam(value = "search", required = false) String search) {
+                                                                                          @RequestParam(value = "status", required = false) String status) {
 
-        return reservationService.getReservationForServiceByIdStatusCount(id, search);
+        return reservationService.getReservationForServiceByIdStatusCount(id, status);
     }
 
 
