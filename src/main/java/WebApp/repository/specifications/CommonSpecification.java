@@ -19,15 +19,16 @@ public class CommonSpecification<E extends AbstractEntity> implements Specificat
         Path path = getPath(root, criteria.getKey());
 
         if (criteria.getOperation().equalsIgnoreCase(">")) {
-            return builder.greaterThanOrEqualTo(
+            return builder.greaterThan(
                     path, criteria.getValue().toString());
         } else if (criteria.getOperation().equalsIgnoreCase("<")) {
-            return builder.lessThanOrEqualTo(
+            return builder.lessThan(
                     path, criteria.getValue().toString());
         } else if (criteria.getOperation().equalsIgnoreCase(":")) {
             if (path.getJavaType() == String.class) {
                 return builder.like(
-                        builder.lower(path), "%" + criteria.getValue() + "%"
+                        builder.lower(path),
+                        builder.lower(builder.literal("%" + criteria.getValue() + "%"))
                 );
             } else {
                 return builder.equal(path, criteria.getValue());

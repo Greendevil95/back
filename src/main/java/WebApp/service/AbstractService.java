@@ -70,10 +70,11 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
 
     protected Specification<E> initSpecification(String search) {
         CommonSpecificationBuilder<E> builder = new CommonSpecificationBuilder();
-        Pattern pattern = Pattern.compile("(\\w|.+?)(:|<|>)(?U)(\\w+?),");
-        Matcher matcher = pattern.matcher(search + ",");
+        Pattern pattern = Pattern.compile("(and|or)(\\w|.+?)(:|<|>)(?U)(\\w+?),");
+
+        Matcher matcher = pattern.matcher("and" + search + ",");
         while (matcher.find()) {
-            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+            builder.with(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4));
         }
         Specification<E> specification = builder.build();
         return specification;
