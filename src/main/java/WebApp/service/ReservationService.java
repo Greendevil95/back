@@ -2,6 +2,7 @@ package WebApp.service;
 
 import WebApp.entity.Reservation;
 import WebApp.entity.User;
+import WebApp.entity.response.EntityResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -16,4 +17,8 @@ public interface ReservationService extends CommonService<Reservation> {
     ResponseEntity<Optional<WebApp.entity.Service>> getServiceForReservation(Long id);
 
     ResponseEntity setStatus(Reservation reservation);
+
+    ResponseEntity<EntityResponse<Reservation>> getReservationForServiceByIdStatus(Long id, Integer page, Integer pageSize, String fieldForSort, String status);
+
+    ResponseEntity getReservationForServiceByIdStatusCount(Long id, String status);
 }

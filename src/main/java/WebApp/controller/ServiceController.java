@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/service")
+@RequestMapping("/services")
 public class ServiceController extends AbstractController<Service, ServiceServiceImpl> {
 
     @Autowired
@@ -38,8 +38,25 @@ public class ServiceController extends AbstractController<Service, ServiceServic
                                                                                     @RequestParam(value = "pagesize", required = false) Integer pageSize,
                                                                                     @RequestParam(value = "field", required = false) String fieldForSort,
                                                                                     @RequestParam(value = "search", required = false) String search) {
-        search = search == null ? "service.id:" + id : search + ",service.id:" + id;
+        search = search == null ? "service.id:" + id : search + ",andservice.id:" + id;
         return reservationService.getAll(page, pageSize, fieldForSort, search);
+    }
+
+    @GetMapping("/{id}/reservations/status")
+    public ResponseEntity<EntityResponse<Reservation>> getReservationForServiceByIdStatus(@PathVariable(value = "id") Long id,
+                                                                                          @RequestParam(value = "page", required = false) Integer page,
+                                                                                          @RequestParam(value = "pagesize", required = false) Integer pageSize,
+                                                                                          @RequestParam(value = "field", required = false) String fieldForSort,
+                                                                                          @RequestParam(value = "search", required = false) String search) {
+
+        return reservationService.getReservationForServiceByIdStatus(id, page, pageSize, fieldForSort, search);
+    }
+
+    @GetMapping("/{id}/reservations/status/count")
+    public ResponseEntity<EntityResponse<Reservation>> getReservationForServiceByIdStatus(@PathVariable(value = "id") Long id,
+                                                                                          @RequestParam(value = "search", required = false) String search) {
+
+        return reservationService.getReservationForServiceByIdStatusCount(id, search);
     }
 
 

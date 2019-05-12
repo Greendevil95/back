@@ -4,11 +4,13 @@ import WebApp.entity.Organization;
 import WebApp.entity.Reservation;
 import WebApp.entity.ReservationStatus;
 import WebApp.entity.User;
+import WebApp.entity.response.EntityResponse;
 import WebApp.repository.OrganizationRepository;
 import WebApp.repository.ReservationRepository;
 import WebApp.repository.ServiceRepository;
 import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -187,4 +189,25 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
         return ResponseEntity.ok().body("Status changed.");
 
     }
+
+    @Override
+    public ResponseEntity<EntityResponse<Reservation>> getReservationForServiceByIdStatus(Long id, Integer page, Integer pageSize, String fieldForSort, String status) {
+        Pageable pageable = initPageable(page, fieldForSort, pageSize);
+        if (status == null) {
+            status = "inprocess";
+        }
+        Optional<WebApp.entity.Service> service = serviceRepository.findById(id);
+        return ResponseEntity.ok(new EntityResponse<Reservation>(reservationRepository.findByServiceAndStatus(service.get(), ReservationStatus.get(status), pageable)));
+    }
+
+    @Override
+    public ResponseEntity getReservationForServiceByIdStatusCount(Long id, String status) {
+        if (status == null) {
+            status = "inprocess";
+        }
+        Optional<WebApp.entity.Service> service = serviceRepository.findById(id);
+        return ResponseEntity.ok(reservationRepository.countByServiceAndStatus(service.get(), ReservationStatus.get(status)));
+    }
+
+
 }
