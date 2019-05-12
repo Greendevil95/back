@@ -43,7 +43,7 @@ public class UserController extends AbstractController<User, UserServiceImpl> {
                                                                                     @RequestParam(value = "pagesize", required = false) Integer pageSize,
                                                                                     @RequestParam(value = "field", required = false) String fieldForSort,
                                                                                     @RequestParam(value = "search", required = false) String search) {
-        search = search == null ? "user.id:" + id : search + ",user.id:" + id;
+        search = search == null ? "user.id:" + id : search + ",anduser.id:" + id;
         return organizatioService.getAll(page, pageSize, fieldForSort, search);
     }
 
@@ -62,7 +62,7 @@ public class UserController extends AbstractController<User, UserServiceImpl> {
                                                                                  @RequestParam(value = "pagesize", required = false) Integer pageSize,
                                                                                  @RequestParam(value = "field", required = false) String fieldForSort,
                                                                                  @RequestParam(value = "search", required = false) String search) {
-        search = search == null ? "user.id:" + id : search + ",user.id:" + id;
+        search = search == null ? "user.id:" + id : search + ",anduser.id:" + id;
         return reservationService.getAll(page, pageSize, fieldForSort, search);
     }
 
