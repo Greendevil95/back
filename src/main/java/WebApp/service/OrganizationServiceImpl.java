@@ -37,10 +37,10 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
         Optional optionalAuthUser = userRepository.findByEmail(authUserName);
 
         organization.setUser((User) optionalAuthUser.get());
-        if (organization.getStartTime()==null) {
+        if (organization.getStartTime() == null) {
             organization.setStartTime(LocalTime.of(8, 0));
         }
-        if (organization.getFinishTime()==null) {
+        if (organization.getFinishTime() == null) {
             organization.setFinishTime(LocalTime.of(17, 0));
         }
         organization.setRating((float) 0);
@@ -125,5 +125,15 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
 
         statistics.setCountSuccsesReservation(0);
         return ResponseEntity.ok(statistics);
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity getCountServiceForOrganizationByIdWithStatus(Long id, String status) {
+        if (status == null) {
+            status = "inprocess";
+        }
+        status = status.toUpperCase();
+        return ResponseEntity.ok(organizationRepository.getCountReservationWithStatus(id, status));
     }
 }

@@ -51,4 +51,10 @@ public class OrganizationController extends AbstractController<Organization, Org
     public ResponseEntity<OrganizationStatistics> getStatistics(@PathParam(value = "id") Long id) {
         return organizatioService.getStatisticsById(id);
     }
+
+    @GetMapping("/{id}/services/statuscount")
+    public ResponseEntity<OrganizationStatistics> getStatistics(@PathVariable(value = "id") Long id,
+                                                                @RequestParam(value = "status", required = false) String status) {
+        return organizatioService.getCountServiceForOrganizationByIdWithStatus(id, status);
+    }
 }
