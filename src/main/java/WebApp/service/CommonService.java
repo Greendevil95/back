@@ -10,7 +10,7 @@ public interface CommonService<E extends AbstractEntity> {
 
     ResponseEntity<E> getById(Long Id);
 
-    ResponseEntity<EntityResponse<E>> getAll(Integer page, String fieldForSort, String search);
+    ResponseEntity<EntityResponse<E>> getAll(Integer page, Integer pageSize, String fieldForSort, String search);
 
     ResponseEntity update(E entity);
 

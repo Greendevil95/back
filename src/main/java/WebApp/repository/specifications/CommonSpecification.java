@@ -4,7 +4,6 @@ import WebApp.entity.AbstractEntity;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
-import java.util.Arrays;
 
 public class CommonSpecification<E extends AbstractEntity> implements Specification<E> {
 
@@ -17,18 +16,15 @@ public class CommonSpecification<E extends AbstractEntity> implements Specificat
     @Override
     public Predicate toPredicate(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
 
-        Path path = getPath(root,criteria.getKey());
-
+        Path path = getPath(root, criteria.getKey());
 
         if (criteria.getOperation().equalsIgnoreCase(">")) {
             return builder.greaterThanOrEqualTo(
                     path, criteria.getValue().toString());
-        }
-        else if (criteria.getOperation().equalsIgnoreCase("<")) {
+        } else if (criteria.getOperation().equalsIgnoreCase("<")) {
             return builder.lessThanOrEqualTo(
                     path, criteria.getValue().toString());
-        }
-        else if (criteria.getOperation().equalsIgnoreCase(":")) {
+        } else if (criteria.getOperation().equalsIgnoreCase(":")) {
             if (path.getJavaType() == String.class) {
                 return builder.like(
                         builder.lower(path), "%" + criteria.getValue() + "%"

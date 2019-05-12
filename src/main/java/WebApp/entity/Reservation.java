@@ -1,7 +1,6 @@
 package WebApp.entity;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -21,7 +20,7 @@ public class Reservation extends AbstractEntity {
     private String comment;
 
     @ElementCollection(targetClass = ReservationStatus.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "reservation_status",joinColumns = @JoinColumn(name = "reservation_id"))
+    @CollectionTable(name = "reservation_status", joinColumns = @JoinColumn(name = "reservation_id"))
     @Enumerated(EnumType.STRING)
     private Set<ReservationStatus> status;
 
@@ -47,59 +46,59 @@ public class Reservation extends AbstractEntity {
         this.countReservation = countReservation;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setService(Service service) {
-        this.service = service;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public void setStatus(Set<ReservationStatus> status) {
-        this.status = status;
-    }
-
-    public void setRating(float rating) {
-        this.rating = rating;
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public void setCountReservation(Integer countReservation) {
-        this.countReservation = countReservation;
-    }
-
     public User getUser() {
         return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Service getService() {
         return service;
     }
 
+    public void setService(Service service) {
+        this.service = service;
+    }
+
     public String getComment() {
         return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public Set<ReservationStatus> getStatus() {
         return status;
     }
 
+    public void setStatus(Set<ReservationStatus> status) {
+        this.status = status;
+    }
+
     public float getRating() {
         return rating;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 
     public LocalDateTime getDateTime() {
         return dateTime;
     }
 
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
     public Integer getCountReservation() {
         return countReservation;
+    }
+
+    public void setCountReservation(Integer countReservation) {
+        this.countReservation = countReservation;
     }
 }

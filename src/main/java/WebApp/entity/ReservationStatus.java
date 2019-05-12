@@ -1,6 +1,6 @@
 package WebApp.entity;
 
-public enum ReservationStatus{
+public enum ReservationStatus {
     INPROCESS,
     ASSEPTED,
     CUSTOMERREJECT,

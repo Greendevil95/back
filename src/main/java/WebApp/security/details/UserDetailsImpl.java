@@ -1,4 +1,4 @@
-package WebApp.security.Details;
+package WebApp.security.details;
 
 import WebApp.entity.State;
 import WebApp.entity.User;
@@ -14,15 +14,13 @@ import java.util.Set;
 
 public class UserDetailsImpl implements UserDetails {
 
-
+    private final Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
     @Autowired
     private User user;
 
     public UserDetailsImpl(User user) {
         this.user = user;
     }
-
-    private final Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

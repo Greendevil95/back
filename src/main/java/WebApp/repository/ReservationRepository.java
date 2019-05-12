@@ -8,5 +8,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface ReservationRepository extends CommonRepository<Reservation> {
     Page<Reservation> findByUser(User user, Pageable pageable);
+
     Page<Reservation> findByService(Service service, Pageable pageable);
 }

@@ -10,15 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/reservations")
-public class ReservationController extends AbstractController<Reservation,ReservationServiceImpl> {
+public class ReservationController extends AbstractController<Reservation, ReservationServiceImpl> {
+    @Autowired
+    ReservationService reservationService;
+
     public ReservationController(ReservationServiceImpl service) {
         super(service);
     }
-
-    @Autowired
-    ReservationService reservationService;
 
     @PostMapping("/addrating")
     public ResponseEntity<Iterable<User>> addRating(@RequestBody Reservation reservation) {
@@ -26,18 +28,12 @@ public class ReservationController extends AbstractController<Reservation,Reserv
     }
 
     @GetMapping("/{id}/user")
-    public ResponseEntity<EntityResponse<User>> getOwnerReservationById(@PathVariable(value = "id") Long id,
-                                                                         @RequestParam(value = "page", required = false) Integer page,
-                                                                         @RequestParam(value = "field" , required = false) String fieldForSort,
-                                                                         @RequestParam(value = "search", required = false) String search){
-        return reservationService.getOwnerReservation(id,page,fieldForSort,search);
+    public ResponseEntity<Optional<User>> getOwnerReservationById(@PathVariable(value = "id") Long id) {
+        return reservationService.getOwnerReservation(id);
     }
 
     @GetMapping("/{id}/service")
-    public ResponseEntity<EntityResponse<Service>> getServiceForReservationById(@PathVariable(value = "id") Long id,
-                                                                             @RequestParam(value = "page", required = false) Integer page,
-                                                                             @RequestParam(value = "field" , required = false) String fieldForSort,
-                                                                             @RequestParam(value = "search", required = false) String search){
-        return reservationService.getServiceForReservation(id,page,fieldForSort,search);
+    public ResponseEntity<Optional<Service>> getServiceForReservationById(@PathVariable(value = "id") Long id) {
+        return reservationService.getServiceForReservation(id);
     }
 }

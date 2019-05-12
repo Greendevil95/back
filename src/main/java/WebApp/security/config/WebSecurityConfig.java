@@ -1,6 +1,6 @@
 package WebApp.security.config;
 
-import WebApp.security.Details.UserDetailsServiceImpl;
+import WebApp.security.details.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
