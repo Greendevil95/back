@@ -37,8 +37,12 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
         Optional optionalAuthUser = userRepository.findByEmail(authUserName);
 
         organization.setUser((User) optionalAuthUser.get());
-        organization.setStartTime(LocalTime.of(8, 0));
-        organization.setFinishTime(LocalTime.of(17, 0));
+        if (organization.getStartTime()==null) {
+            organization.setStartTime(LocalTime.of(8, 0));
+        }
+        if (organization.getFinishTime()==null) {
+            organization.setFinishTime(LocalTime.of(17, 0));
+        }
         organization.setRating((float) 0);
         organizationRepository.save(organization);
         return ResponseEntity.ok("Organization with name " + organization.getName() + " added for user with id " + ((User) optionalAuthUser.get()).getId());
