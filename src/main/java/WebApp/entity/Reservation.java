@@ -30,20 +30,16 @@ public class Reservation extends AbstractEntity {
     @Column(name = "date")
     private LocalDateTime dateTime;
 
-    @Column(name = "count_reservation")
-    private Integer countReservation;
-
     public Reservation() {
     }
 
-    public Reservation(User user, Service service, String comment, Set<ReservationStatus> status, float rating, LocalDateTime dateTime, Integer countReservation) {
+    public Reservation(User user, Service service, String comment, Set<ReservationStatus> status, float rating, LocalDateTime dateTime) {
         this.user = user;
         this.service = service;
         this.comment = comment;
         this.status = status;
         this.rating = rating;
         this.dateTime = dateTime;
-        this.countReservation = countReservation;
     }
 
     public User getUser() {
@@ -94,11 +90,4 @@ public class Reservation extends AbstractEntity {
         this.dateTime = dateTime;
     }
 
-    public Integer getCountReservation() {
-        return countReservation;
-    }
-
-    public void setCountReservation(Integer countReservation) {
-        this.countReservation = countReservation;
-    }
 }
