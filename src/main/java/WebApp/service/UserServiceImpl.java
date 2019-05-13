@@ -1,8 +1,10 @@
 package WebApp.service;
 
-import WebApp.entity.Role;
-import WebApp.entity.State;
+import WebApp.entity.Reservation;
 import WebApp.entity.User;
+import WebApp.entity.enums.Category;
+import WebApp.entity.enums.Role;
+import WebApp.entity.enums.State;
 import WebApp.repository.OrganizationRepository;
 import WebApp.repository.ReservationRepository;
 import WebApp.repository.UserRepository;
@@ -13,8 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserServiceImpl extends AbstractService<User, UserRepository> implements UserService {
@@ -46,6 +47,25 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
         User authUser = userRepository.findByEmail(authUserName).get();
         return ResponseEntity.ok(authUser.getId());
+    }
+
+    @Override
+    public ResponseEntity getInterestsForUserById(Long id) {
+        User user = userRepository.findById(id).get();
+        Iterable<Reservation> reservations = reservationRepository.findByUser(user);
+
+        Map<Set<Category>, Integer> integerMap = new HashMap<Set<Category>, Integer>();
+        for (Reservation r : reservations) {
+
+            Set<Category> categories = r.getService().getCategory();
+            if (integerMap.containsKey(categories)) {
+                Integer count = integerMap.get(categories);
+                integerMap.put(categories, count + 1);
+            } else {
+                integerMap.put(categories, 0);
+            }
+        }
+        return ResponseEntity.ok(integerMap);
     }
 
     @Override

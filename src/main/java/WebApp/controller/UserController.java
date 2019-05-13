@@ -74,4 +74,9 @@ public class UserController extends AbstractController<User, UserServiceImpl> {
         Long id = Long.parseLong(userService.getAuthUserId().getBody().toString());
         return getReservationForUserById(id, page, pageSize, fieldForSort, search);
     }
+
+    @GetMapping("/{id}/interests")
+    public ResponseEntity<EntityResponse<Reservation>> getReservationForAuthUser(@PathVariable(value = "id") Long id) {
+        return userService.getInterestsForUserById(id);
+    }
 }

@@ -2,7 +2,7 @@ package WebApp.service;
 
 import WebApp.entity.Organization;
 import WebApp.entity.Reservation;
-import WebApp.entity.ReservationStatus;
+import WebApp.entity.enums.ReservationStatus;
 import WebApp.entity.User;
 import WebApp.entity.response.EntityResponse;
 import WebApp.repository.OrganizationRepository;

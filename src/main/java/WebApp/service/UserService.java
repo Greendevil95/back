@@ -10,4 +10,6 @@ public interface UserService extends CommonService<User> {
     ResponseEntity getAuthUser();
 
     ResponseEntity getAuthUserId();
+
+    ResponseEntity getInterestsForUserById(Long id);
 }

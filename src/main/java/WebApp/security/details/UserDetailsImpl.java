@@ -1,6 +1,6 @@
 package WebApp.security.details;
 
-import WebApp.entity.State;
+import WebApp.entity.enums.State;
 import WebApp.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
