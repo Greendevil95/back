@@ -2,6 +2,7 @@ package WebApp.service;
 
 import WebApp.entity.AbstractEntity;
 import WebApp.entity.User;
+import WebApp.entity.enums.Category;
 import WebApp.entity.response.EntityResponse;
 import WebApp.repository.CommonRepository;
 import WebApp.repository.UserRepository;
@@ -15,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,6 +65,19 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
             return ResponseEntity.ok("Object with id " + id + " was delete.");
         } else return ResponseEntity.notFound().build();
     }
+
+    @PreAuthorize("hasAuthority('USER')")
+    public static ResponseEntity getAllCategory() {
+        Set<Category> categories = new HashSet<>();
+        categories.add(Category.SPORT);
+        categories.add(Category.HEALTHANDBEAUTY);
+        categories.add(Category.TRAINING);
+        categories.add(Category.COOKING);
+        categories.add(Category.ENTERTAINMENT);
+        categories.add(Category.DIFFERENT);
+        return ResponseEntity.ok(categories);
+    }
+
 
     public boolean isAuthUser(User user) {
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();

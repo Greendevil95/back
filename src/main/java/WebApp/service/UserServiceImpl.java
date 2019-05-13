@@ -58,9 +58,9 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         for (Reservation r : reservations) {
 
             Set<Category> categories = r.getService().getCategory();
+
             if (integerMap.containsKey(categories)) {
-                Integer count = integerMap.get(categories);
-                integerMap.put(categories, count + 1);
+                integerMap.put(categories, integerMap.get(categories) + 1);
             } else {
                 integerMap.put(categories, 0);
             }
