@@ -1,4 +1,4 @@
-package WebApp.entity;
+package WebApp.entity.enums;
 
 import org.springframework.security.core.GrantedAuthority;
 
