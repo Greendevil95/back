@@ -2,8 +2,8 @@ package WebApp.service;
 
 import WebApp.entity.Organization;
 import WebApp.entity.Reservation;
-import WebApp.entity.enums.ReservationStatus;
 import WebApp.entity.User;
+import WebApp.entity.enums.ReservationStatus;
 import WebApp.entity.response.EntityResponse;
 import WebApp.repository.OrganizationRepository;
 import WebApp.repository.ReservationRepository;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ReservationServiceImpl extends AbstractService<Reservation, ReservationRepository> implements ReservationService {
@@ -169,12 +170,12 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
 
     @PreAuthorize("hasAuthority('USER')")
     @Override
-    public ResponseEntity setStatus(Reservation reservation) {
+    public ResponseEntity setStatusById(Long id, Set<ReservationStatus> reservationStatuses) {
 
-        Optional<Reservation> thisReservatio = reservationRepository.findById(reservation.getId());
+        Optional<Reservation> thisReservatio = reservationRepository.findById(id);
 
         if (!thisReservatio.isPresent()) {
-            return ResponseEntity.badRequest().body("Reservation with id " + reservation.getId() + " not found.");
+            return ResponseEntity.badRequest().body("Reservation with id " + id + " not found.");
         }
 
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -184,7 +185,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
             return ResponseEntity.badRequest().body("Its reservation not for you organization. ");
         }
 
-        thisReservatio.get().setStatus(reservation.getStatus());
+        thisReservatio.get().setStatus(reservationStatuses);
         reservationRepository.save(thisReservatio.get());
         return ResponseEntity.ok().body("Status changed.");
 

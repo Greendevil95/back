@@ -3,7 +3,7 @@ package WebApp.controller;
 import WebApp.entity.Reservation;
 import WebApp.entity.Service;
 import WebApp.entity.User;
-import WebApp.entity.response.EntityResponse;
+import WebApp.entity.enums.ReservationStatus;
 import WebApp.service.ReservationService;
 import WebApp.service.ReservationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/reservations")
@@ -35,5 +36,11 @@ public class ReservationController extends AbstractController<Reservation, Reser
     @GetMapping("/{id}/service")
     public ResponseEntity<Optional<Service>> getServiceForReservationById(@PathVariable(value = "id") Long id) {
         return reservationService.getServiceForReservation(id);
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity setStatusForReservationById(@PathVariable(value = "id") Long id,
+                                                      @RequestBody Set<ReservationStatus> reservationStatuses) {
+        return reservationService.setStatusById(id, reservationStatuses);
     }
 }
