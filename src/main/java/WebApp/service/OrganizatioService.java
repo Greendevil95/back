@@ -13,4 +13,6 @@ public interface OrganizatioService extends CommonService<Organization> {
     ResponseEntity<Optional<User>> getOwnerOrganization(Long id);
 
     ResponseEntity<OrganizationStatistics> getStatisticsById(Long id);
+
+    ResponseEntity getCountServiceForOrganizationByIdWithStatus(Long id, String status);
 }

@@ -15,8 +15,8 @@ public class CommonSpecificationBuilder<E extends AbstractEntity> {
         params = new ArrayList<SearchCriteria>();
     }
 
-    public CommonSpecificationBuilder with(String key, String operation, Object value) {
-        params.add(new SearchCriteria(key, operation, value));
+    public CommonSpecificationBuilder with(String connect, String key, String operation, Object value) {
+        params.add(new SearchCriteria(connect, key, operation, value));
         return this;
     }
 
@@ -32,8 +32,13 @@ public class CommonSpecificationBuilder<E extends AbstractEntity> {
         Specification result = specs.get(0);
 
         for (int i = 1; i < params.size(); i++) {
-            result = Specification.where(result)
-                    .and(specs.get(i));
+            if (params.get(i).getConnect().equals("and")) {
+                result = Specification.where(result)
+                        .and(specs.get(i));
+            }else {
+                result = Specification.where(result)
+                        .or(specs.get(i));
+            }
         }
         return result;
     }

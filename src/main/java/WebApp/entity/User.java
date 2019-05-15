@@ -1,5 +1,7 @@
 package WebApp.entity;
 
+import WebApp.entity.enums.Role;
+import WebApp.entity.enums.State;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -53,4 +53,5 @@ public class AbstractController <E extends AbstractEntity, S extends CommonServi
     public ResponseEntity deleteById(@PathVariable(value = "id") Long id) {
         return service.deleteById(id);
     }
+
 }

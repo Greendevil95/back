@@ -1,9 +1,11 @@
 package WebApp.entity;
 
+import WebApp.entity.enums.Category;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Service extends AbstractEntity {
@@ -31,14 +33,32 @@ public class Service extends AbstractEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
     private List<Reservation> reservations;
 
+    @ElementCollection(targetClass = Category.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "category", joinColumns = @JoinColumn(name = "service_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<Category> category;
+
     public Service() {
     }
 
-    public Service(String description, Organization organization, Integer time, List<Reservation> reservations) {
+    public Service(String name, Float price, String description, Integer time, Float rating, Organization organization, List<Reservation> reservations, Set<Category> category) {
+        this.name = name;
+        this.price = price;
         this.description = description;
-        this.organization = organization;
         this.time = time;
+        this.rating = rating;
+        this.organization = organization;
         this.reservations = reservations;
+        this.category = category;
+    }
+
+    public Set<Category> getCategory() {
+
+        return category;
+    }
+
+    public void setCategory(Set<Category> category) {
+        this.category = category;
     }
 
     public String getName() {

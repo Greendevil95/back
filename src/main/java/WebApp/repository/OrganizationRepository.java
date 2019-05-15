@@ -22,4 +22,15 @@ public interface OrganizationRepository extends CommonRepository<Organization> {
 
     Optional<Organization> findByServices(Service service);
 
+    @Query(value = "select COUNT (r.*) " +
+            "from reservation r " +
+            "inner join service s on s.id = r.service_id " +
+            "inner join organization o on s.organization_id = o.id " +
+            "inner join reservation_status status on r.id = status.reservation_id " +
+            "where s.organization_id = :organizationId " +
+            "and status.status=:status",
+            nativeQuery = true)
+    Integer getCountReservationWithStatus(@Param("organizationId") Long organizationId,
+                                          @Param("status") String status);
+
 }
