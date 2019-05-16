@@ -36,7 +36,7 @@ public class CommonSpecification<E extends AbstractEntity> implements Specificat
                         builder.lower(builder.literal("%" + criteria.getValue() + "%"))
                 );
             }else{
-                return builder.equal(path,"%" + criteria.getValue() + "%");
+                return builder.equal(path,criteria.getValue());
             }
 //            if (path.getJavaType() == Set.class)
 //            {
