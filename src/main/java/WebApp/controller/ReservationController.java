@@ -40,7 +40,7 @@ public class ReservationController extends AbstractController<Reservation, Reser
 
     @PutMapping("/{id}/status")
     public ResponseEntity setStatusForReservationById(@PathVariable(value = "id") Long id,
-                                                      @RequestBody Set<ReservationStatus> reservationStatuses) {
-        return reservationService.setStatusById(id, reservationStatuses);
+                                                      @RequestParam(value = "status" , required = false) String status) {
+        return reservationService.setStatusById(id, ReservationStatus.get(status));
     }
 }

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 public class Service extends AbstractEntity {
@@ -33,15 +32,14 @@ public class Service extends AbstractEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
     private List<Reservation> reservations;
 
-    @ElementCollection(targetClass = Category.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "category", joinColumns = @JoinColumn(name = "service_id"))
+    @Column(name = "category")
     @Enumerated(EnumType.STRING)
-    private Set<Category> category;
+    private Category category;
 
     public Service() {
     }
 
-    public Service(String name, Float price, String description, Integer time, Float rating, Organization organization, List<Reservation> reservations, Set<Category> category) {
+    public Service(String name, Float price, String description, Integer time, Float rating, Organization organization, List<Reservation> reservations, Category category) {
         this.name = name;
         this.price = price;
         this.description = description;
@@ -52,12 +50,11 @@ public class Service extends AbstractEntity {
         this.category = category;
     }
 
-    public Set<Category> getCategory() {
-
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(Set<Category> category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 

@@ -4,7 +4,6 @@ import WebApp.entity.enums.ReservationStatus;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
 @Table(name = "reservation")
@@ -21,10 +20,9 @@ public class Reservation extends AbstractEntity {
     @Column(name = "comment")
     private String comment;
 
-    @ElementCollection(targetClass = ReservationStatus.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "reservation_status", joinColumns = @JoinColumn(name = "reservation_id"))
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private Set<ReservationStatus> status;
+    private ReservationStatus status;
 
     @Column(name = "rating")
     private float rating;
@@ -35,7 +33,7 @@ public class Reservation extends AbstractEntity {
     public Reservation() {
     }
 
-    public Reservation(User user, Service service, String comment, Set<ReservationStatus> status, float rating, LocalDateTime dateTime) {
+    public Reservation(User user, Service service, String comment, ReservationStatus status, float rating, LocalDateTime dateTime) {
         this.user = user;
         this.service = service;
         this.comment = comment;
@@ -68,11 +66,12 @@ public class Reservation extends AbstractEntity {
         this.comment = comment;
     }
 
-    public Set<ReservationStatus> getStatus() {
+    public ReservationStatus getStatus() {
+
         return status;
     }
 
-    public void setStatus(Set<ReservationStatus> status) {
+    public void setStatus(ReservationStatus status) {
         this.status = status;
     }
 
