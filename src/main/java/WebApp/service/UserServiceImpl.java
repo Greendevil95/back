@@ -54,15 +54,14 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         User user = userRepository.findById(id).get();
         Iterable<Reservation> reservations = reservationRepository.findByUser(user);
 
-        Map<Set<Category>, Integer> integerMap = new HashMap<Set<Category>, Integer>();
+        Map<Category, Integer> integerMap = new HashMap<Category, Integer>();
         for (Reservation r : reservations) {
 
-            Set<Category> categories = r.getService().getCategory();
-
-            if (integerMap.containsKey(categories)) {
-                integerMap.put(categories, integerMap.get(categories) + 1);
+            Category category = r.getService().getCategory();
+            if (integerMap.containsKey(category)) {
+                integerMap.put(category, integerMap.get(category) + 1);
             } else {
-                integerMap.put(categories, 0);
+                integerMap.put(category, 1);
             }
         }
         return ResponseEntity.ok(integerMap);
@@ -143,10 +142,10 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         }
         userRepository.deleteById(id);
 
-        deleteUser.get().setStates(Collections.singleton(State.DELETE));
-        deleteUser.get().setOrganization(null);
-        deleteUser.get().setReservations(null);
-        userRepository.save(deleteUser.get());
+//        deleteUser.get().setStates(Collections.singleton(State.DELETE));
+//        deleteUser.get().setOrganization(null);
+//        deleteUser.get().setReservations(null);
+//        userRepository.save(deleteUser.get());
         return ResponseEntity.ok("User with email " + deleteUser.get().getEmail() + " was delete.");
     }
 

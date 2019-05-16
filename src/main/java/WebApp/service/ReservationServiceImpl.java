@@ -55,10 +55,10 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
 
         reservation.setUser(authUser);
         reservation.setRating(0);
-        reservation.setStatus(Collections.singleton(ReservationStatus.INPROCESS));
+        reservation.setStatus(ReservationStatus.INPROCESS);
         reservationRepository.save(reservation);
 
-        return ResponseEntity.ok("User with username " + authUserName + "reserved to service with id =  " + reservation.getService().getId());
+        return ResponseEntity.ok("User with username " + authUserName + " reserved to service with id =  " + reservation.getService().getId());
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -75,7 +75,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
         }
         float rating = reservation.getRating();
         rating = rating < 0 ? 0 : rating;
-        rating = rating > 5. ? 5 : rating;
+        rating = rating > 10. ? 10 : rating;
 
         reservation1ForRating.get().setRating(rating);
         reservationRepository.save(reservation1ForRating.get());
@@ -135,14 +135,14 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
 
     private void updateServiceRating(WebApp.entity.Service service) {
         float rating = serviceRepository.getRating(service.getId());
-        rating = (float) (Math.ceil(rating * 10) * 10);
+        rating = (float) (Math.ceil(rating * 10) / 10);
         service.setRating(rating);
         serviceRepository.save(service);
     }
 
     private void updateOrganizationRating(Organization organization) {
         float rating = organizationRepository.getRating(organization.getId());
-        rating = (float) (Math.ceil(rating * 10) * 10);
+        rating = (float) (Math.ceil(rating * 10) / 10);
         organization.setRating(rating);
         organizationRepository.save(organization);
     }
@@ -170,7 +170,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
 
     @PreAuthorize("hasAuthority('USER')")
     @Override
-    public ResponseEntity setStatusById(Long id, Set<ReservationStatus> reservationStatuses) {
+    public ResponseEntity setStatusById(Long id, ReservationStatus reservationStatuses) {
 
         Optional<Reservation> thisReservatio = reservationRepository.findById(id);
 

@@ -104,9 +104,12 @@ public class ServiceServiceImpl extends AbstractService<Service, ServiceReposito
     @Override
     public ResponseEntity deleteById(Long id) {
         Optional<Service> service = serviceRepository.findById(id);
-        if (service.isPresent())
+        if (service.isPresent()) {
             return delete(serviceRepository.findById(id).get());
-        else return ResponseEntity.badRequest().body("Service with id " + id + " not found");
+        }
+        else {
+            return ResponseEntity.badRequest().body("Service with id " + id + " not found");
+        }
     }
 
     @PreAuthorize("hasAuthority('USER')")

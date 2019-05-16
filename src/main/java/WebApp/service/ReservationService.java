@@ -18,7 +18,7 @@ public interface ReservationService extends CommonService<Reservation> {
 
     ResponseEntity<Optional<WebApp.entity.Service>> getServiceForReservation(Long id);
 
-    ResponseEntity setStatusById(Long id, Set<ReservationStatus> reservationStatuses);
+    ResponseEntity setStatusById(Long id, ReservationStatus reservationStatus);
 
     ResponseEntity<EntityResponse<Reservation>> getReservationForServiceByIdStatus(Long id, Integer page, Integer pageSize, String fieldForSort, String status);
 

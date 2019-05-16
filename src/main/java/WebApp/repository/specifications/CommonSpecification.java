@@ -1,9 +1,13 @@
 package WebApp.repository.specifications;
 
 import WebApp.entity.AbstractEntity;
+import WebApp.entity.enums.State;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CommonSpecification<E extends AbstractEntity> implements Specification<E> {
 
@@ -25,14 +29,20 @@ public class CommonSpecification<E extends AbstractEntity> implements Specificat
             return builder.lessThan(
                     path, criteria.getValue().toString());
         } else if (criteria.getOperation().equalsIgnoreCase(":")) {
+            System.out.println(path.getJavaType());
             if (path.getJavaType() == String.class) {
                 return builder.like(
                         builder.lower(path),
                         builder.lower(builder.literal("%" + criteria.getValue() + "%"))
                 );
-            } else {
-                return builder.equal(path, criteria.getValue());
+            }else{
+                return builder.equal(path,"%" + criteria.getValue() + "%");
             }
+//            if (path.getJavaType() == Set.class)
+//            {
+//                return builder.equal(path, State.DELETE);
+//            }
+
         }
         return null;
     }
