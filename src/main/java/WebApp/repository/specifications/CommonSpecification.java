@@ -1,13 +1,11 @@
 package WebApp.repository.specifications;
 
 import WebApp.entity.AbstractEntity;
-import WebApp.entity.enums.State;
+import WebApp.entity.enums.Category;
+import WebApp.entity.enums.ReservationStatus;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 public class CommonSpecification<E extends AbstractEntity> implements Specification<E> {
 
@@ -29,19 +27,21 @@ public class CommonSpecification<E extends AbstractEntity> implements Specificat
             return builder.lessThan(
                     path, criteria.getValue().toString());
         } else if (criteria.getOperation().equalsIgnoreCase(":")) {
-            System.out.println(path.getJavaType());
             if (path.getJavaType() == String.class) {
                 return builder.like(
                         builder.lower(path),
                         builder.lower(builder.literal("%" + criteria.getValue() + "%"))
                 );
-            }else{
-                return builder.equal(path,criteria.getValue());
             }
-//            if (path.getJavaType() == Set.class)
-//            {
-//                return builder.equal(path, State.DELETE);
-//            }
+            if (path.getJavaType() == ReservationStatus.class) {
+                return builder.equal(path, ReservationStatus.get(criteria.getValue().toString()));
+            }
+            if (path.getJavaType() == Category.class) {
+                return builder.equal(path, Category.get(criteria.getValue().toString()));
+            } else {
+                return builder.equal(path, criteria.getValue());
+            }
+
 
         }
         return null;

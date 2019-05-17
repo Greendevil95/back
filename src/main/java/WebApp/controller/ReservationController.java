@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/reservations")
@@ -40,7 +39,7 @@ public class ReservationController extends AbstractController<Reservation, Reser
 
     @PutMapping("/{id}/status")
     public ResponseEntity setStatusForReservationById(@PathVariable(value = "id") Long id,
-                                                      @RequestParam(value = "status" , required = false) String status) {
+                                                      @RequestParam(value = "status", required = false) String status) {
         return reservationService.setStatusById(id, ReservationStatus.get(status));
     }
 }
