@@ -15,7 +15,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl extends AbstractService<User, UserRepository> implements UserService {
@@ -50,11 +53,11 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     }
 
     @Override
-    public ResponseEntity getInterestsForUserById(Long id) {
+    public Map<Category, Integer> getInterestsForUserById(Long id) {
         User user = userRepository.findById(id).get();
         Iterable<Reservation> reservations = reservationRepository.findByUser(user);
 
-        Map<Category, Integer> integerMap = new HashMap<Category, Integer>();
+        Map<Category, Integer> integerMap = new LinkedHashMap<Category, Integer>();
         for (Reservation r : reservations) {
 
             Category category = r.getService().getCategory();
@@ -64,7 +67,14 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
                 integerMap.put(category, 1);
             }
         }
-        return ResponseEntity.ok(integerMap);
+
+        Map<Category, Integer> result = new LinkedHashMap<Category, Integer>();
+
+        integerMap.entrySet().stream()
+                .sorted(Map.Entry.<Category, Integer>comparingByValue().reversed())
+                .forEach(x->result.put(x.getKey(),x.getValue()));
+
+        return result;
     }
 
     @Override

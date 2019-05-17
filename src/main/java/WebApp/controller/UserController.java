@@ -2,15 +2,16 @@ package WebApp.controller;
 
 import WebApp.entity.Organization;
 import WebApp.entity.Reservation;
+import WebApp.entity.Service;
 import WebApp.entity.User;
+import WebApp.entity.enums.Category;
 import WebApp.entity.response.EntityResponse;
-import WebApp.service.OrganizatioService;
-import WebApp.service.ReservationService;
-import WebApp.service.UserService;
-import WebApp.service.UserServiceImpl;
+import WebApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -20,6 +21,8 @@ public class UserController extends AbstractController<User, UserServiceImpl> {
     private UserService userService;
     @Autowired
     private OrganizatioService organizatioService;
+    @Autowired
+    private ServiceService serviceService;
     @Autowired
     private ReservationService reservationService;
 
@@ -76,7 +79,37 @@ public class UserController extends AbstractController<User, UserServiceImpl> {
     }
 
     @GetMapping("/{id}/interests")
-    public ResponseEntity<EntityResponse<Reservation>> getReservationForAuthUser(@PathVariable(value = "id") Long id) {
-        return userService.getInterestsForUserById(id);
+    public ResponseEntity getUserInterestTags(@PathVariable(value = "id") Long id) {
+        return ResponseEntity.ok(userService.getInterestsForUserById(id));
+    }
+
+    @GetMapping("/{id}/interests/services")
+    public ResponseEntity<EntityResponse<Service>> getServicesForUserWithIdByInterest(@PathVariable(value = "id") Long id,
+                                                                                      @RequestParam(value = "page", required = false) Integer page,
+                                                                                      @RequestParam(value = "pagesize", required = false) Integer pageSize,
+                                                                                      @RequestParam(value = "field", required = false) String fieldForSort,
+                                                                                      @RequestParam(value = "search", required = false) String search) {
+
+        Map<Category, Integer> map = userService.getInterestsForUserById(id);
+        String firstInteres = Category.get((Category) map.keySet().toArray()[0]);
+        String secondInteres = Category.get((Category) map.keySet().toArray()[1]);
+
+        if (firstInteres != null) {
+            search = search == null ? "category:" + firstInteres : search + ",andcategory:" + firstInteres;
+        }
+        if (secondInteres != null) {
+            search = search + ",orcategory:" + secondInteres;
+        }
+        return serviceService.getAll(page, pageSize, fieldForSort, search);
+    }
+
+
+    @GetMapping("/interests/services")
+    public ResponseEntity<EntityResponse<Service>> getServicesForAuthUserByInterest(@RequestParam(value = "page", required = false) Integer page,
+                                                                                    @RequestParam(value = "pagesize", required = false) Integer pageSize,
+                                                                                    @RequestParam(value = "field", required = false) String fieldForSort,
+                                                                                    @RequestParam(value = "search", required = false) String search) {
+        Long id = Long.parseLong(userService.getAuthUserId().getBody().toString());
+        return getServicesForUserWithIdByInterest(id, page, pageSize, fieldForSort, search);
     }
 }
