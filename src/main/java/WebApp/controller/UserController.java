@@ -91,15 +91,19 @@ public class UserController extends AbstractController<User, UserServiceImpl> {
                                                                                       @RequestParam(value = "search", required = false) String search) {
 
         Map<Category, Integer> map = userService.getInterestsForUserById(id);
-        String firstInteres = Category.get((Category) map.keySet().toArray()[0]);
-        String secondInteres = Category.get((Category) map.keySet().toArray()[1]);
 
-        if (firstInteres != null) {
-            search = search == null ? "category:" + firstInteres : search + ",andcategory:" + firstInteres;
+        switch (map.size()) {
+            case (1):
+                String firstInteres = Category.get((Category) map.keySet().toArray()[0]);
+                search = search == null ? "category:" + firstInteres : search + ",andcategory:" + firstInteres;
+            case (2):
+                String secondInteres = Category.get((Category) map.keySet().toArray()[1]);
+                search = search + ",orcategory:" + secondInteres;
+            case (3):
+                String thirdInteres = Category.get((Category) map.keySet().toArray()[2]);
+                search = search + ",orcategory:" + thirdInteres;
         }
-        if (secondInteres != null) {
-            search = search + ",orcategory:" + secondInteres;
-        }
+
         return serviceService.getAll(page, pageSize, fieldForSort, search);
     }
 
