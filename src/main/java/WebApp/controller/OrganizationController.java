@@ -68,4 +68,14 @@ public class OrganizationController extends AbstractController<Organization, Org
         search = search == null ? "service.organization.id:" + id : search + ",andservice.organization.id:" + id;
         return reservationService.getAll(page, pageSize, fieldForSort, search);
     }
+
+    @GetMapping("/reservations/auth")
+    public ResponseEntity<EntityResponse<Reservation>> getReservationForOrganizationsByIdAuthUser(@RequestParam(value = "page", required = false) Integer page,
+                                                                                                  @RequestParam(value = "pagesize", required = false) Integer pageSize,
+                                                                                                  @RequestParam(value = "field", required = false) String fieldForSort,
+                                                                                                  @RequestParam(value = "search", required = false) String search) {
+        Long id = Long.parseLong(userService.getAuthUserId().getBody().toString());
+        search = search == null ? "service.organization.user.id:" + id : search + ",andservice.organization.user.id:" + id;
+        return reservationService.getAll(page, pageSize, fieldForSort, search);
+    }
 }
