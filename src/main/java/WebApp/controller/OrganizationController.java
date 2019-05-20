@@ -1,13 +1,11 @@
 package WebApp.controller;
 
 import WebApp.entity.Organization;
+import WebApp.entity.Reservation;
 import WebApp.entity.Service;
 import WebApp.entity.User;
 import WebApp.entity.response.EntityResponse;
-import WebApp.service.OrganizatioService;
-import WebApp.service.OrganizationServiceImpl;
-import WebApp.service.ServiceService;
-import WebApp.service.UserService;
+import WebApp.service.*;
 import WebApp.service.forStatistics.OrganizationStatistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +25,9 @@ public class OrganizationController extends AbstractController<Organization, Org
 
     @Autowired
     ServiceService serviceService;
+
+    @Autowired
+    ReservationService reservationService;
 
     public OrganizationController(OrganizationServiceImpl service) {
         super(service);
@@ -56,5 +57,15 @@ public class OrganizationController extends AbstractController<Organization, Org
     public ResponseEntity<OrganizationStatistics> getStatistics(@PathVariable(value = "id") Long id,
                                                                 @RequestParam(value = "status", required = false) String status) {
         return organizatioService.getCountServiceForOrganizationByIdWithStatus(id, status);
+    }
+
+    @GetMapping("/{id}/reservations")
+    public ResponseEntity<EntityResponse<Reservation>> getReservationForOrganizationById(@PathVariable(value = "id") Long id,
+                                                                                         @RequestParam(value = "page", required = false) Integer page,
+                                                                                         @RequestParam(value = "pagesize", required = false) Integer pageSize,
+                                                                                         @RequestParam(value = "field", required = false) String fieldForSort,
+                                                                                         @RequestParam(value = "search", required = false) String search) {
+        search = search == null ? "service.organization.id:" + id : "andservice.organization.id:" + id;
+        return reservationService.getAll(page, pageSize, fieldForSort, search);
     }
 }
