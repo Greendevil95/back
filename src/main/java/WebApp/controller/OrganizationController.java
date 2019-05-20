@@ -65,7 +65,7 @@ public class OrganizationController extends AbstractController<Organization, Org
                                                                                          @RequestParam(value = "pagesize", required = false) Integer pageSize,
                                                                                          @RequestParam(value = "field", required = false) String fieldForSort,
                                                                                          @RequestParam(value = "search", required = false) String search) {
-        search = search == null ? "service.organization.id:" + id : "andservice.organization.id:" + id;
+        search = search == null ? "service.organization.id:" + id : search + ",andservice.organization.id:" + id;
         return reservationService.getAll(page, pageSize, fieldForSort, search);
     }
 }
