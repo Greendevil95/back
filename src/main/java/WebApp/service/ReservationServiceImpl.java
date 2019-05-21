@@ -16,9 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class ReservationServiceImpl extends AbstractService<Reservation, ReservationRepository> implements ReservationService {
@@ -80,6 +78,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
         reservation1ForRating.get().setRating(rating);
         reservationRepository.save(reservation1ForRating.get());
 
+        updateServiceRating(reservation1ForRating.get().getService());
         updateOrganizationRating(reservation1ForRating.get().getService().getOrganization());
 
         return ResponseEntity.ok("Rating save for service.");
@@ -98,7 +97,14 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
         }
         reservation.setUser(updateReservation.get().getUser());
         reservation.setService(updateReservation.get().getService());
+        reservation.setStatus(updateReservation.get().getStatus());
+        float rating = reservation.getRating();
+        rating = rating < 0 ? 0 : rating;
+        rating = rating > 10. ? 10 : rating;
+        reservation.setRating(rating);
+
         reservationRepository.save(reservation);
+
         updateServiceRating(reservation.getService());
         updateOrganizationRating(reservation.getService().getOrganization());
         return ResponseEntity.ok("Reservation with id " + reservation.getId() + " was update");

@@ -12,7 +12,8 @@ public interface ServiceRepository extends CommonRepository<Service> {
 
     @Query(value = "select AVG(r.rating) " +
             "from reservation r " +
-            "where r.service_id = :serviceId",
+            "where r.service_id = :serviceId " +
+            "and r.rating > 0",
             nativeQuery = true)
     Float getRating(@Param("serviceId") Long serviceId);
 }
