@@ -72,7 +72,7 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
 
         integerMap.entrySet().stream()
                 .sorted(Map.Entry.<Category, Integer>comparingByValue().reversed())
-                .forEach(x->result.put(x.getKey(),x.getValue()));
+                .forEach(x -> result.put(x.getKey(), x.getValue()));
 
         return result;
     }
@@ -83,6 +83,7 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setRoles(Collections.singleton(Role.USER));
             user.setStates(State.ACTIVE);
+            user.setVip(false);
             userRepository.save(user);
             return ResponseEntity.ok("Registration user with email " + user.getEmail() + " successful!");
         } else return ResponseEntity.badRequest().body("User with email: " + user.getEmail() + " already exists!");
@@ -114,6 +115,7 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         } else {
             user.setPassword(updateUser.get().getPassword());
         }
+        user.setVip(updateUser.get().getVip());
         user.setReservations(updateUser.get().getReservations());
         user.setOrganization(updateUser.get().getOrganization());
         user.setStates(updateUser.get().getStates());
@@ -155,6 +157,16 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
 //        deleteUser.get().setReservations(null);
 //        userRepository.save(deleteUser.get());
         return ResponseEntity.ok("User with email " + deleteUser.get().getEmail() + " was delete.");
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    public ResponseEntity setVipForAuthUser() {
+        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+        User authUser = userRepository.findByEmail(authUserName).get();
+
+        authUser.setVip(true);
+        userRepository.save(authUser);
+        return ResponseEntity.ok("User with id " + authUser.getId() + " is vip. ");
     }
 
 }

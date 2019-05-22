@@ -15,4 +15,6 @@ public interface UserService extends CommonService<User> {
     ResponseEntity getAuthUserId();
 
     Map<Category, Integer> getInterestsForUserById(Long id);
+
+    ResponseEntity setVipForAuthUser();
 }

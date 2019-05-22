@@ -125,5 +125,10 @@ public class UserController extends AbstractController<User, UserServiceImpl> {
         return reservationService.getReservationForUserByIdStatusCount(id, status);
     }
 
+    @PostMapping("/auth/vip")
+    public ResponseEntity setVipForAuthUser(){
+        return userService.setVipForAuthUser();
+    }
+
 
 }
