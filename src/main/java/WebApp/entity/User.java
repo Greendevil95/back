@@ -26,13 +26,8 @@ public class User extends AbstractEntity {
     @Column(name = "phone")
     private String phone;
 
-    @Column(name = "rating")
-    private float rating;
-
-    @ElementCollection(targetClass = State.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_state", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
-    private Set<State> states;
+    private State states;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
@@ -50,7 +45,7 @@ public class User extends AbstractEntity {
     public User() {
     }
 
-    public User(String email, String password, String name, String phone, Set<State> states, List<Organization> organization, List<Reservation> reservations, Set<Role> roles) {
+    public User(String email, String password, String name, String phone, State states, List<Organization> organization, List<Reservation> reservations, Set<Role> roles) {
         this.email = email;
         this.password = password;
         this.name = name;
@@ -95,19 +90,11 @@ public class User extends AbstractEntity {
         this.phone = phone;
     }
 
-    public float getRating() {
-        return rating;
-    }
-
-    public void setRating(float rating) {
-        this.rating = rating;
-    }
-
-    public Set<State> getStates() {
+    public State getStates() {
         return states;
     }
 
-    public void setStates(Set<State> states) {
+    public void setStates(State states) {
         this.states = states;
     }
 

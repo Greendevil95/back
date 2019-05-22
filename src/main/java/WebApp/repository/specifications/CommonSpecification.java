@@ -29,8 +29,8 @@ public class CommonSpecification<E extends AbstractEntity> implements Specificat
         } else if (criteria.getOperation().equalsIgnoreCase(":")) {
             if (path.getJavaType() == String.class) {
                 return builder.like(
-                        builder.lower(path),
-                        builder.lower(builder.literal("%" + criteria.getValue() + "%"))
+                        path,
+                        "%" + criteria.getValue() + "%"
                 );
             }
             if (path.getJavaType() == ReservationStatus.class) {
