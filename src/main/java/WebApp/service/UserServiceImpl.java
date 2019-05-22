@@ -81,9 +81,8 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     public ResponseEntity add(User user) {
         if (!userRepository.findByEmail(user.getEmail()).isPresent()) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setRating(0);
             user.setRoles(Collections.singleton(Role.USER));
-            user.setStates(Collections.singleton(State.ACTIVE));
+            user.setStates(State.ACTIVE);
             userRepository.save(user);
             return ResponseEntity.ok("Registration user with email " + user.getEmail() + " successful!");
         } else return ResponseEntity.badRequest().body("User with email: " + user.getEmail() + " already exists!");
@@ -119,7 +118,6 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         user.setOrganization(updateUser.get().getOrganization());
         user.setStates(updateUser.get().getStates());
         user.setRoles(updateUser.get().getRoles());
-        user.setRating(updateUser.get().getRating());
         userRepository.save(user);
         return ResponseEntity.ok("Data for user with email " + user.getEmail() + " was refreshing!");
     }

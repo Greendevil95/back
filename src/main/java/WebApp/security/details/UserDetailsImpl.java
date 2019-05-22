@@ -1,7 +1,7 @@
 package WebApp.security.details;
 
-import WebApp.entity.enums.State;
 import WebApp.entity.User;
+import WebApp.entity.enums.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -48,7 +48,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !user.getStates().equals(Collections.singleton(State.BANNED));
+        return !user.getStates().equals(State.BANNED);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.getStates().equals(Collections.singleton(State.ACTIVE));
+        return user.getStates().equals(State.ACTIVE);
     }
 
     public User getUser() {
