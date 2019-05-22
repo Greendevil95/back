@@ -118,4 +118,12 @@ public class UserController extends AbstractController<User, UserServiceImpl> {
         Long id = Long.parseLong(userService.getAuthUserId().getBody().toString());
         return getServicesForUserWithIdByInterest(id, page, pageSize, fieldForSort, search);
     }
+
+    @GetMapping("/{id}/reservations/status/count")
+    public ResponseEntity getReservationForUserByIdStatus(@PathVariable(value = "id") Long id,
+                                                          @RequestParam(value = "status", required = false) String status) {
+        return reservationService.getReservationForUserByIdStatusCount(id, status);
+    }
+
+
 }

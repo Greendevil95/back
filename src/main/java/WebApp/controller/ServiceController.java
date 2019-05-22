@@ -53,9 +53,8 @@ public class ServiceController extends AbstractController<Service, ServiceServic
     }
 
     @GetMapping("/{id}/reservations/status/count")
-    public ResponseEntity<EntityResponse<Reservation>> getReservationForServiceByIdStatus(@PathVariable(value = "id") Long id,
+    public ResponseEntity getReservationForServiceByIdStatus(@PathVariable(value = "id") Long id,
                                                                                           @RequestParam(value = "status", required = false) String status) {
-
         return reservationService.getReservationForServiceByIdStatusCount(id, status);
     }
 
