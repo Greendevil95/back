@@ -26,6 +26,9 @@ public class User extends AbstractEntity {
     @Column(name = "phone")
     private String phone;
 
+    @Column(name = "vip")
+    private Boolean vip;
+
     @Enumerated(EnumType.STRING)
     private State states;
 
@@ -45,11 +48,12 @@ public class User extends AbstractEntity {
     public User() {
     }
 
-    public User(String email, String password, String name, String phone, State states, List<Organization> organization, List<Reservation> reservations, Set<Role> roles) {
+    public User(String email, String password, String name, String phone, Boolean vip, State states, List<Organization> organization, List<Reservation> reservations, Set<Role> roles) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.phone = phone;
+        this.vip = vip;
         this.states = states;
         this.organization = organization;
         this.reservations = reservations;
@@ -88,6 +92,14 @@ public class User extends AbstractEntity {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Boolean getVip() {
+        return vip;
+    }
+
+    public void setVip(Boolean vip) {
+        this.vip = vip;
     }
 
     public State getStates() {
