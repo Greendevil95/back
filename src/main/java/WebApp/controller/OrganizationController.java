@@ -33,6 +33,14 @@ public class OrganizationController extends AbstractController<Organization, Org
         super(service);
     }
 
+    @GetMapping("/guest")
+    public ResponseEntity<EntityResponse<Organization>> getAllOrganizations(@RequestParam(value = "page", required = false) Integer page,
+                                                                            @RequestParam(value = "pagesize", required = false) Integer pageSize,
+                                                                            @RequestParam(value = "field", required = false) String fieldForSort,
+                                                                            @RequestParam(value = "search", required = false) String search) {
+        return organizatioService.getAllOrganizations(page, pageSize, fieldForSort, search);
+    }
+
     @GetMapping("/{id}/user")
     public ResponseEntity<Optional<User>> getOwnerOrganizationById(@PathVariable(value = "id") Long id) {
         return organizatioService.getOwnerOrganization(id);
