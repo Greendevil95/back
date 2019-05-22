@@ -23,4 +23,6 @@ public interface ReservationService extends CommonService<Reservation> {
     ResponseEntity<EntityResponse<Reservation>> getReservationForServiceByIdStatus(Long id, Integer page, Integer pageSize, String fieldForSort, String status);
 
     ResponseEntity getReservationForServiceByIdStatusCount(Long id, String status);
+
+    ResponseEntity getReservationForUserByIdStatusCount(Long id, String status);
 }
