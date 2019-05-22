@@ -218,5 +218,14 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
         return ResponseEntity.ok(reservationRepository.countByServiceAndStatus(service.get(), ReservationStatus.get(status)));
     }
 
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity getReservationForUserByIdStatusCount(Long id, String status) {
+        if (status == null) {
+            status = "inprocess";
+        }
+        return ResponseEntity.ok(reservationRepository.getCountForOwnerOrganizationAndStatus(id, status));
+    }
+
 
 }

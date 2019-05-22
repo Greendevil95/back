@@ -2,11 +2,14 @@ package WebApp.service;
 
 import WebApp.entity.Organization;
 import WebApp.entity.User;
+import WebApp.entity.response.EntityResponse;
 import WebApp.repository.OrganizationRepository;
 import WebApp.repository.ServiceRepository;
 import WebApp.repository.UserRepository;
 import WebApp.service.forStatistics.OrganizationStatistics;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -48,6 +51,12 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
         return ResponseEntity.ok("Organization with name " + organization.getName() + " added for user with id " + ((User) optionalAuthUser.get()).getId());
     }
 
+    public ResponseEntity<EntityResponse<Organization>> getAllOrganizations(Integer page, Integer pageSize, String fieldForSort, String search) {
+        Specification<Organization> specification = initSpecification(search);
+        Pageable pageable = initPageable(page, fieldForSort, pageSize);
+        return ResponseEntity.ok(new EntityResponse<Organization>(organizationRepository.findAll(specification,pageable)));
+    }
+
     @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity updateById(Long id, Organization organization) {
@@ -81,7 +90,6 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
     @Override
     public ResponseEntity delete(Organization organization) {
         Long organizationId = organization.getId();
-        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
 
         if (!organizationRepository.findById(organizationId).isPresent()) {
             return ResponseEntity.badRequest().body("Organization with id " + organizationId + " not found.");
