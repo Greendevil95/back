@@ -3,6 +3,7 @@ package WebApp.entity.enums;
 public enum ReservationStatus {
     INPROCESS,
     ASSEPTED,
+    FINISHED,
     CUSTOMERREJECT,
     OWNERREJECT;
 
@@ -12,6 +13,8 @@ public enum ReservationStatus {
                 return INPROCESS;
             case ("assepted") :
                 return ASSEPTED;
+            case ("finished") :
+                return FINISHED;
             case ("customerreject") :
                 return CUSTOMERREJECT;
             case ("ownerreject") :
