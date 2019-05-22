@@ -38,7 +38,7 @@ public class CommonSpecification<E extends AbstractEntity> implements Specificat
             }
             if (path.getJavaType() == Boolean.class) {
                 boolean search = false;
-                if (criteria.getValue().toString().toLowerCase().equals("true")){
+                if (criteria.getValue().toString().toLowerCase().equals("true")) {
                     search = true;
                 }
                 return builder.equal(path, search);
