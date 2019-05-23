@@ -34,6 +34,10 @@ public class User extends AbstractEntity {
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private List<Report> reports;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<Organization> organization;
 
     @JsonIgnore
@@ -48,13 +52,14 @@ public class User extends AbstractEntity {
     public User() {
     }
 
-    public User(String email, String password, String name, String phone, Boolean vip, State states, List<Organization> organization, List<Reservation> reservations, Set<Role> roles) {
+    public User(String email, String password, String name, String phone, Boolean vip, State states, List<Report> reports, List<Organization> organization, List<Reservation> reservations, Set<Role> roles) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.phone = phone;
         this.vip = vip;
         this.states = states;
+        this.reports = reports;
         this.organization = organization;
         this.reservations = reservations;
         this.roles = roles;
@@ -76,6 +81,14 @@ public class User extends AbstractEntity {
     @JsonProperty
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Report> getReports() {
+        return reports;
+    }
+
+    public void setReports(List<Report> reports) {
+        this.reports = reports;
     }
 
     public String getName() {
