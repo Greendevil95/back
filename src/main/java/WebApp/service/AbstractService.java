@@ -108,7 +108,9 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
             pageSize = constPageSize;
         }
         String[] properties = fieldForSort.split("\\.");
-
+        if (properties.length==1){
+            return PageRequest.of(page, pageSize, Sort.Direction.ASC, properties[0]);
+        }
         if (properties[1].toLowerCase().equals("desc")) {
             return PageRequest.of(page, pageSize, Sort.Direction.DESC, properties[0]);
         } else {
