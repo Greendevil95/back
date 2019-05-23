@@ -69,12 +69,13 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
     @PreAuthorize("hasAuthority('USER')")
     public static ResponseEntity getAllCategory() {
         Set<Category> categories = new HashSet<>();
-        categories.add(Category.SPORT);
-        categories.add(Category.HEALTHANDBEAUTY);
-        categories.add(Category.TRAINING);
-        categories.add(Category.COOKING);
-        categories.add(Category.ENTERTAINMENT);
-        categories.add(Category.DIFFERENT);
+        categories.add(Category.СПОРТ);
+        categories.add(Category.ЗДОРОВЬЕ);
+        categories.add(Category.КРАСОТА);
+        categories.add(Category.ОБУЧЕНИЕ);
+        categories.add(Category.КУЛИНАРИЯ);
+        categories.add(Category.РАЗВЛЕЧЕНИЯ);
+        categories.add(Category.РАЗНОЕ);
         return ResponseEntity.ok(categories);
     }
 
