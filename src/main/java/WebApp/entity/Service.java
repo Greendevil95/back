@@ -32,6 +32,10 @@ public class Service extends AbstractEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
     private List<Reservation> reservations;
 
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
+    private List<Report> reports;
+
     @Column(name = "category")
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -39,7 +43,7 @@ public class Service extends AbstractEntity {
     public Service() {
     }
 
-    public Service(String name, Float price, String description, Integer time, Float rating, Organization organization, List<Reservation> reservations, Category category) {
+    public Service(String name, Float price, String description, Integer time, Float rating, Organization organization, List<Reservation> reservations, List<Report> reports, Category category) {
         this.name = name;
         this.price = price;
         this.description = description;
@@ -47,6 +51,7 @@ public class Service extends AbstractEntity {
         this.rating = rating;
         this.organization = organization;
         this.reservations = reservations;
+        this.reports = reports;
         this.category = category;
     }
 
@@ -72,6 +77,14 @@ public class Service extends AbstractEntity {
 
     public void setPrice(Float price) {
         this.price = price;
+    }
+
+    public List<Report> getReports() {
+        return reports;
+    }
+
+    public void setReports(List<Report> reports) {
+        this.reports = reports;
     }
 
     public String getDescription() {

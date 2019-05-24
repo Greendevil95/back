@@ -184,11 +184,10 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
             return ResponseEntity.badRequest().body("Reservation with id " + id + " not found.");
         }
 
-        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> authUser = userRepository.findByEmail(authUserName);
+
         Organization organization = thisReservatio.get().getService().getOrganization();
-        if (!authUser.get().equals(organization.getUser())) {
-            return ResponseEntity.badRequest().body("Its reservation not for you organization. ");
+        if (!isAuthUser(thisReservatio.get().getUser()) && !isAuthUser(thisReservatio.get().getService().getOrganization().getUser())) {
+            return ResponseEntity.badRequest().body("Its reservation not for you. ");
         }
 
         thisReservatio.get().setStatus(reservationStatuses);
