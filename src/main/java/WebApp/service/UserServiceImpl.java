@@ -3,6 +3,7 @@ package WebApp.service;
 import WebApp.entity.Reservation;
 import WebApp.entity.User;
 import WebApp.entity.enums.Category;
+import WebApp.entity.enums.ReservationStatus;
 import WebApp.entity.enums.Role;
 import WebApp.entity.enums.State;
 import WebApp.repository.OrganizationRepository;
@@ -169,4 +170,22 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         return ResponseEntity.ok("User with id " + authUser.getId() + " is vip. ");
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity setState(Long id, String state) {
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()) {
+            return ResponseEntity.badRequest().body("User with id " + id + " not found.");
+        }
+        user.get().setStates(State.get(state));
+
+        if (state.toLowerCase().equals("banned")){
+            Iterable<Reservation> reservations = reservationRepository.findByUser(user.get());
+            for (Reservation r : reservations){
+                r.setStatus(ReservationStatus.OWNERREJECT);
+                reservationRepository.save(r);
+            }
+        }
+        userRepository.save(user.get());
+        return ResponseEntity.ok("User with id " + id + " changed state. ");
+    }
 }

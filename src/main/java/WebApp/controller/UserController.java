@@ -130,5 +130,17 @@ public class UserController extends AbstractController<User, UserServiceImpl> {
         return userService.setVipForAuthUser();
     }
 
+    @PutMapping("/{id}/ban")
+    public ResponseEntity setBan(@PathVariable(value = "id") Long id){
+        return userService.setState(id,"banned");
+
+    }
+
+    @PutMapping("/{id}/active")
+    public ResponseEntity setActive(@PathVariable(value = "id") Long id){
+        return userService.setState(id,"active");
+
+    }
+
 
 }

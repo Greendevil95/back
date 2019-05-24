@@ -138,7 +138,7 @@ public class ReportServiceImpl extends AbstractService<Report, ReportRepository>
     }
 
 
-
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity<EntityResponse<Report>> getAll(Integer page, Integer pageSize, String fieldForSort, String search) {
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
