@@ -9,7 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController("/reports")
+@RestController
+@RequestMapping("/reports")
 public class ReportController extends AbstractController<Report, ReportServiceImpl> {
     @Autowired
     ReportService reportService;

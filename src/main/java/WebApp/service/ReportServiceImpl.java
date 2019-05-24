@@ -46,7 +46,7 @@ public class ReportServiceImpl extends AbstractService<Report, ReportRepository>
 
         report.setStatus(false);
         reportRepository.save(report);
-        return null;
+        return ResponseEntity.ok("Report save");
     }
 
     @PreAuthorize("hasAuthority('USER') OR hasAuthority('ADMIN')")
