@@ -7,38 +7,55 @@ public enum ReservationStatus {
     CUSTOMERREJECT,
     OWNERREJECT;
 
-    public static ReservationStatus get(String status){
-        switch (status.toLowerCase()){
-            case ("inprocess") :
+    public static ReservationStatus get(String status) {
+        switch (status.toLowerCase()) {
+            case ("inprocess"):
                 return INPROCESS;
-            case ("accepted") :
+            case ("accepted"):
                 return ACCEPTED;
-            case ("finished") :
+            case ("finished"):
                 return FINISHED;
-            case ("customerreject") :
+            case ("customerreject"):
                 return CUSTOMERREJECT;
-            case ("ownerreject") :
+            case ("ownerreject"):
                 return OWNERREJECT;
             default:
                 return null;
         }
     }
 
-    public static String getRus(String status){
-        switch (status.toLowerCase()){
-            case ("inprocess") :
+    public static String getRus(String status) {
+        switch (status.toLowerCase()) {
+            case ("inprocess"):
                 return "в процессе";
-            case ("accepted") :
+            case ("accepted"):
                 return "подтверждена";
-            case ("finished") :
+            case ("finished"):
                 return "закончена";
-            case ("customerreject") :
+            case ("customerreject"):
                 return "отменил заказчик";
-            case ("ownerreject") :
+            case ("ownerreject"):
                 return "отменил мастер";
             default:
                 return null;
         }
 
+    }
+
+    public static boolean canChange(ReservationStatus oldStatus, ReservationStatus newStatus) {
+        switch (oldStatus) {
+            case INPROCESS:
+                return true;
+            case ACCEPTED:
+                return newStatus != INPROCESS;
+            case OWNERREJECT:
+                return false;
+            case CUSTOMERREJECT:
+                return false;
+            case FINISHED:
+                return false;
+            default:
+                return false;
+        }
     }
 }

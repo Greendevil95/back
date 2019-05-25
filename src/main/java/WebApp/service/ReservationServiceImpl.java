@@ -1,14 +1,12 @@
 package WebApp.service;
 
+import WebApp.entity.Interest;
 import WebApp.entity.Organization;
 import WebApp.entity.Reservation;
 import WebApp.entity.User;
 import WebApp.entity.enums.ReservationStatus;
 import WebApp.entity.response.EntityResponse;
-import WebApp.repository.OrganizationRepository;
-import WebApp.repository.ReservationRepository;
-import WebApp.repository.ServiceRepository;
-import WebApp.repository.UserRepository;
+import WebApp.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +27,8 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
     UserRepository userRepository;
     @Autowired
     ServiceRepository serviceRepository;
+    @Autowired
+    InterestRepository interestRepository;
 
     public ReservationServiceImpl(ReservationRepository repository) {
         super(repository);
@@ -76,6 +76,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
         rating = rating > 10. ? 10 : rating;
 
         reservation1ForRating.get().setRating(rating);
+        reservation1ForRating.get().setStatus(ReservationStatus.FINISHED);
         reservationRepository.save(reservation1ForRating.get());
 
         updateServiceRating(reservation1ForRating.get().getService());
@@ -178,20 +179,29 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
     @Override
     public ResponseEntity setStatusById(Long id, ReservationStatus reservationStatuses) {
 
-        Optional<Reservation> thisReservatio = reservationRepository.findById(id);
+        Optional<Reservation> thisReservation = reservationRepository.findById(id);
 
-        if (!thisReservatio.isPresent()) {
+        if (!thisReservation.isPresent()) {
             return ResponseEntity.badRequest().body("Reservation with id " + id + " not found.");
         }
 
 
-        Organization organization = thisReservatio.get().getService().getOrganization();
-        if (!isAuthUser(thisReservatio.get().getUser()) && !isAuthUser(thisReservatio.get().getService().getOrganization().getUser())) {
+        Organization organization = thisReservation.get().getService().getOrganization();
+        if (!isAuthUser(thisReservation.get().getUser()) && !isAuthUser(thisReservation.get().getService().getOrganization().getUser())) {
             return ResponseEntity.badRequest().body("Its reservation not for you. ");
         }
 
-        thisReservatio.get().setStatus(reservationStatuses);
-        reservationRepository.save(thisReservatio.get());
+        if (!ReservationStatus.canChange(thisReservation.get().getStatus(), reservationStatuses)) {
+            return ResponseEntity.badRequest().body("Bad status. Old status is " + thisReservation.get().getStatus().toString());
+        }
+
+        thisReservation.get().setStatus(reservationStatuses);
+        reservationRepository.save(thisReservation.get());
+
+        if (reservationStatuses == ReservationStatus.FINISHED) {
+            updateInteres(thisReservation.get());
+        }
+
         return ResponseEntity.ok().body("Status changed.");
 
     }
@@ -224,6 +234,19 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
             status = "inprocess";
         }
         return ResponseEntity.ok(reservationRepository.getCountForOwnerOrganizationAndStatus(id, status));
+    }
+
+    private void updateInteres(Reservation reservation) {
+        Optional<Interest> interest = interestRepository.findByUserAndCategory(reservation.getUser(), reservation.getService().getCategory());
+        if (interest.isPresent()) {
+            interest.get().setCount(interest.get().getCount() + 1);
+        } else {
+            Interest newInteres = new Interest();
+            newInteres.setUser(reservation.getUser());
+            newInteres.setCategory(reservation.getService().getCategory());
+            newInteres.setCount(1);
+            interestRepository.save(newInteres);
+        }
     }
 
 

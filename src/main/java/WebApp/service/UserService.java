@@ -1,12 +1,10 @@
 package WebApp.service;
 
 
+import WebApp.entity.Interest;
 import WebApp.entity.User;
-import WebApp.entity.enums.Category;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 @Service
 public interface UserService extends CommonService<User> {
@@ -14,7 +12,11 @@ public interface UserService extends CommonService<User> {
 
     ResponseEntity getAuthUserId();
 
-    Map<Category, Integer> getInterestsForUserById(Long id);
+    Iterable<Interest> getInterestsForUserById(Long id);
+
+    Iterable<Interest> get3InterestsForUserById(Long id);
 
     ResponseEntity setVipForAuthUser();
+
+    ResponseEntity setState(Long id, String state);
 }

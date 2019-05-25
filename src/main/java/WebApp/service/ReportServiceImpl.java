@@ -2,11 +2,14 @@ package WebApp.service;
 
 import WebApp.entity.Report;
 import WebApp.entity.User;
+import WebApp.entity.enums.Role;
+import WebApp.entity.response.EntityResponse;
 import WebApp.repository.ReportRepository;
 import WebApp.repository.ServiceRepository;
 import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +31,7 @@ public class ReportServiceImpl extends AbstractService<Report, ReportRepository>
         super(repository);
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity add(Report report) {
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -42,14 +46,16 @@ public class ReportServiceImpl extends AbstractService<Report, ReportRepository>
 
         report.setStatus(false);
         reportRepository.save(report);
-        return null;
+        return ResponseEntity.ok("Report save");
     }
 
+    @PreAuthorize("hasAuthority('USER') OR hasAuthority('ADMIN')")
     @Override
     public ResponseEntity update(Report report) {
         return updateById(report.getId(), report);
     }
 
+    @PreAuthorize("hasAuthority('USER') OR hasAuthority('ADMIN')")
     @Override
     public ResponseEntity updateById(Long id, Report report) {
 
@@ -58,7 +64,10 @@ public class ReportServiceImpl extends AbstractService<Report, ReportRepository>
             return ResponseEntity.badRequest().body("Report with id + " + id + " not found.");
         }
 
-        if (!isAuthUser(updateReport.get().getUser())) {
+        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> authUser = userRepository.findByEmail(authUserName);
+
+        if (!isAuthUser(updateReport.get().getUser()) || !authUser.get().getRoles().contains(Role.ADMIN)) {
             return ResponseEntity.badRequest().body("This is not you report");
         }
 
@@ -73,6 +82,7 @@ public class ReportServiceImpl extends AbstractService<Report, ReportRepository>
         return ResponseEntity.ok("Report with id " + id + " was update.");
     }
 
+    @PreAuthorize("hasAuthority('USER') OR hasAuthority('ADMIN')")
     @Override
     public ResponseEntity delete(Report report) {
 
@@ -87,5 +97,57 @@ public class ReportServiceImpl extends AbstractService<Report, ReportRepository>
 
         reportRepository.delete(report);
         return ResponseEntity.ok("Report with id " + report.getId() + " was delete.");
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity setStatusById(Long id, Boolean status) {
+        Optional<Report> report = reportRepository.findById(id);
+        if (!report.isPresent()) {
+            return ResponseEntity.badRequest().body("Report with id " + id + " not found.");
+        }
+        report.get().setStatus(status);
+        reportRepository.save(report.get());
+        return ResponseEntity.ok().body("Status for report with id " + id + " was changed.");
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<User> getUserByReportId(Long id) {
+        Optional<Report> report = reportRepository.findById(id);
+        if (!report.isPresent()) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(report.get().getUser());
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<WebApp.entity.Service> getServiceByReportId(Long id) {
+        Optional<Report> report = reportRepository.findById(id);
+        if (!report.isPresent()) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(report.get().getService());
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<User> getOwnerOrganizationByReportId(Long id) {
+        Optional<Report> report = reportRepository.findById(id);
+        if (!report.isPresent()) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(report.get().getService().getOrganization().getUser());
+    }
+
+
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity<EntityResponse<Report>> getAll(Integer page, Integer pageSize, String fieldForSort, String search) {
+        String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> authUser = userRepository.findByEmail(authUserName);
+
+        if (!authUser.get().getRoles().contains(Role.ADMIN)) {
+            search = search == null ? "user.id:" + authUser.get().getId() : search + ",anduser.id:" + authUser.get().getId();
+        }
+
+        return super.getAll(page, pageSize, fieldForSort, search);
     }
 }
