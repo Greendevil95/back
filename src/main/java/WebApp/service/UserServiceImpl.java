@@ -1,12 +1,12 @@
 package WebApp.service;
 
+import WebApp.entity.Interest;
 import WebApp.entity.Reservation;
 import WebApp.entity.User;
-import WebApp.entity.enums.Category;
 import WebApp.entity.enums.ReservationStatus;
 import WebApp.entity.enums.Role;
 import WebApp.entity.enums.State;
-import WebApp.repository.OrganizationRepository;
+import WebApp.repository.InterestRepository;
 import WebApp.repository.ReservationRepository;
 import WebApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl extends AbstractService<User, UserRepository> implements UserService {
@@ -27,9 +27,9 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private OrganizationRepository organizationRepository;
-    @Autowired
     private ReservationRepository reservationRepository;
+    @Autowired
+    private InterestRepository interestRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -38,7 +38,6 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     }
 
     @PreAuthorize("hasAuthority('USER')")
-    @Override
     public ResponseEntity getAuthUser() {
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
         User authUser = userRepository.findByEmail(authUserName).get();
@@ -46,43 +45,43 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     }
 
     @PreAuthorize("hasAuthority('USER')")
-    @Override
     public ResponseEntity getAuthUserId() {
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
         User authUser = userRepository.findByEmail(authUserName).get();
         return ResponseEntity.ok(authUser.getId());
     }
 
-    @Override
-    public Map<Category, Integer> getInterestsForUserById(Long id) {
-        User user = userRepository.findById(id).get();
-        Iterable<Reservation> reservations = reservationRepository.findByUser(user);
-
-        Map<Category, Integer> integerMap = new LinkedHashMap<Category, Integer>();
-        for (Reservation r : reservations) {
-
-            Category category = r.getService().getCategory();
-            if (integerMap.containsKey(category)) {
-                integerMap.put(category, integerMap.get(category) + 1);
-            } else {
-                integerMap.put(category, 1);
-            }
+    @PreAuthorize("hasAuthority('USER')")
+    public Iterable<Interest> getInterestsForUserById(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()) {
+            return null;
         }
+        return interestRepository.findByUserOrderByCountDesc(user.get());
+    }
 
-        Map<Category, Integer> result = new LinkedHashMap<Category, Integer>();
-
-        integerMap.entrySet().stream()
-                .sorted(Map.Entry.<Category, Integer>comparingByValue().reversed())
-                .forEach(x -> result.put(x.getKey(), x.getValue()));
-
-        return result;
+    @PreAuthorize("hasAuthority('USER')")
+    public Iterable<Interest> get3InterestsForUserById(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent()) {
+            return null;
+        }
+        return interestRepository.findFirst3ByUserOrderByCountDesc(user.get());
     }
 
     @Override
     public ResponseEntity add(User user) {
         if (!userRepository.findByEmail(user.getEmail()).isPresent()) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+
             user.setRoles(Collections.singleton(Role.USER));
+            if (user.getEmail().equals("denisadmin@mail.ru")) {
+                Set<Role> roles = new HashSet<>();
+                roles.add(Role.USER);
+                roles.add(Role.ADMIN);
+                user.setRoles(roles);
+            }
             user.setStates(State.ACTIVE);
             user.setVip(false);
             userRepository.save(user);
@@ -178,14 +177,18 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         }
         user.get().setStates(State.get(state));
 
-        if (state.toLowerCase().equals("banned")){
+        if (state.toLowerCase().equals("banned")) {
             Iterable<Reservation> reservations = reservationRepository.findByUser(user.get());
-            for (Reservation r : reservations){
-                r.setStatus(ReservationStatus.OWNERREJECT);
-                reservationRepository.save(r);
+            for (Reservation r : reservations) {
+                if (ReservationStatus.canChange(r.getStatus(), ReservationStatus.OWNERREJECT)) {
+                    r.setStatus(ReservationStatus.OWNERREJECT);
+                    reservationRepository.save(r);
+                }
             }
         }
         userRepository.save(user.get());
         return ResponseEntity.ok("User with id " + id + " changed state. ");
     }
+
+
 }

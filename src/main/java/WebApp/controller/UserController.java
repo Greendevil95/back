@@ -1,17 +1,11 @@
 package WebApp.controller;
 
-import WebApp.entity.Organization;
-import WebApp.entity.Reservation;
-import WebApp.entity.Service;
-import WebApp.entity.User;
-import WebApp.entity.enums.Category;
+import WebApp.entity.*;
 import WebApp.entity.response.EntityResponse;
 import WebApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -90,19 +84,10 @@ public class UserController extends AbstractController<User, UserServiceImpl> {
                                                                                       @RequestParam(value = "field", required = false) String fieldForSort,
                                                                                       @RequestParam(value = "search", required = false) String search) {
 
-        Map<Category, Integer> map = userService.getInterestsForUserById(id);
+        Iterable<Interest> interests = userService.get3InterestsForUserById(id);
 
-        if (map.size() > 1) {
-            String firstInteres = Category.get((Category) map.keySet().toArray()[0]);
-            search = search == null ? "category:" + firstInteres : search + ",andcategory:" + firstInteres;
-            if (map.size() > 2) {
-                String secondInteres = Category.get((Category) map.keySet().toArray()[1]);
-                search = search + ",orcategory:" + secondInteres;
-                if (map.size() > 3) {
-                    String thirdInteres = Category.get((Category) map.keySet().toArray()[2]);
-                    search = search + ",orcategory:" + thirdInteres;
-                }
-            }
+        for (Interest i : interests) {
+            search = search == null ? "category:" + i.getCategory().toString().toLowerCase() : search + ",orcategory:" + i.getCategory().toString().toLowerCase();
 
         }
 
@@ -126,19 +111,19 @@ public class UserController extends AbstractController<User, UserServiceImpl> {
     }
 
     @PostMapping("/auth/vip")
-    public ResponseEntity setVipForAuthUser(){
+    public ResponseEntity setVipForAuthUser() {
         return userService.setVipForAuthUser();
     }
 
     @PutMapping("/{id}/ban")
-    public ResponseEntity setBan(@PathVariable(value = "id") Long id){
-        return userService.setState(id,"banned");
+    public ResponseEntity setBan(@PathVariable(value = "id") Long id) {
+        return userService.setState(id, "banned");
 
     }
 
     @PutMapping("/{id}/active")
-    public ResponseEntity setActive(@PathVariable(value = "id") Long id){
-        return userService.setState(id,"active");
+    public ResponseEntity setActive(@PathVariable(value = "id") Long id) {
+        return userService.setState(id, "active");
 
     }
 
