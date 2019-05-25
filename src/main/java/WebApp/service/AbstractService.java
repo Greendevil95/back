@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractService<E extends AbstractEntity, R extends CommonRepository<E>> implements CommonService<E> {
 
-    private static int constPageSize = 10;
+    private static int constPageSize = 3;
     protected final R repository;
     @Autowired
     UserRepository userRepository;

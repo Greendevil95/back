@@ -16,7 +16,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class OrganizationServiceImpl extends AbstractService<Organization, OrganizationRepository> implements OrganizatioService {
@@ -46,6 +48,7 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
         if (organization.getFinishTime() == null) {
             organization.setFinishTime(LocalTime.of(17, 0));
         }
+
         organization.setRating((float) 0);
         organizationRepository.save(organization);
         return ResponseEntity.ok("Organization with name " + organization.getName() + " added for user with id " + ((User) optionalAuthUser.get()).getId());
