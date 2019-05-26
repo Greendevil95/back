@@ -43,10 +43,10 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
 
         organization.setUser((User) optionalAuthUser.get());
         if (organization.getStartTime() == null) {
-            organization.setStartTime(LocalTime.of(8, 0));
+            organization.setStartTime(LocalTime.of(8, 0).toString());
         }
         if (organization.getFinishTime() == null) {
-            organization.setFinishTime(LocalTime.of(17, 0));
+            organization.setFinishTime(LocalTime.of(17, 0).toString());
         }
 
         organization.setRating((float) 0);
