@@ -4,7 +4,6 @@ package WebApp.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -27,10 +26,10 @@ public class Organization extends AbstractEntity {
     private Float rating;
 
     @Column(name = "start_time")
-    private LocalTime startTime;
+    private String startTime;
 
     @Column(name = "finish_time")
-    private LocalTime finishTime;
+    private String finishTime;
 
     @Column(name = "weekend")
     private String weekend;
@@ -50,7 +49,7 @@ public class Organization extends AbstractEntity {
     public Organization() {
     }
 
-    public Organization(String name, String address, String phoneNumber, String description, Float rating, LocalTime startTime, LocalTime finishTime, String weekend, User user, List<Service> services) {
+    public Organization(String name, String address, String phoneNumber, String description, Float rating, String startTime, String finishTime, String weekend, User user, List<Service> services) {
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
@@ -111,19 +110,19 @@ public class Organization extends AbstractEntity {
         this.rating = rating;
     }
 
-    public LocalTime getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalTime startTime) {
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
-    public LocalTime getFinishTime() {
+    public String getFinishTime() {
         return finishTime;
     }
 
-    public void setFinishTime(LocalTime finishTime) {
+    public void setFinishTime(String finishTime) {
         this.finishTime = finishTime;
     }
 
