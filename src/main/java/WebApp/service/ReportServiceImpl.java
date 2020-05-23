@@ -27,6 +27,9 @@ public class ReportServiceImpl extends AbstractService<Report, ReportRepository>
     @Autowired
     ServiceRepository serviceRepository;
 
+
+
+
     public ReportServiceImpl(ReportRepository repository) {
         super(repository);
     }
@@ -43,7 +46,6 @@ public class ReportServiceImpl extends AbstractService<Report, ReportRepository>
             return ResponseEntity.badRequest().body("Service with id " + report.getService().getId() + " not found.");
         }
         report.setService(service.get());
-
         report.setStatus(false);
         reportRepository.save(report);
         return ResponseEntity.ok("Report save");

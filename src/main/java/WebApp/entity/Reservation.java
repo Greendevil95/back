@@ -30,10 +30,11 @@ public class Reservation extends AbstractEntity {
     @Column(name = "date")
     private LocalDateTime dateTime;
 
+
     public Reservation() {
     }
 
-    public Reservation(User user, Service service, String comment, ReservationStatus status, float rating, LocalDateTime dateTime) {
+    public Reservation(User user, Service service, String comment, ReservationStatus status, float rating, LocalDateTime dateTime, boolean wasRated) {
         this.user = user;
         this.service = service;
         this.comment = comment;

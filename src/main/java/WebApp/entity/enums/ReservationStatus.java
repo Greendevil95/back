@@ -1,6 +1,6 @@
 package WebApp.entity.enums;
 
-public enum ReservationStatus {
+public enum  ReservationStatus {
     INPROCESS,
     ACCEPTED,
     FINISHED,

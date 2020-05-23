@@ -21,6 +21,7 @@ public class AbstractController <E extends AbstractEntity, S extends CommonServi
         return service.add(entity);
     }
 
+
     @GetMapping()
     public ResponseEntity<EntityResponse<E>> getAll(@RequestParam(value = "page", required = false) Integer page,
                                                     @RequestParam(value = "pagesize", required = false) Integer pageSize,

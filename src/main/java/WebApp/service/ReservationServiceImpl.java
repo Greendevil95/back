@@ -1,9 +1,6 @@
 package WebApp.service;
 
-import WebApp.entity.Interest;
-import WebApp.entity.Organization;
-import WebApp.entity.Reservation;
-import WebApp.entity.User;
+import WebApp.entity.*;
 import WebApp.entity.enums.ReservationStatus;
 import WebApp.entity.response.EntityResponse;
 import WebApp.repository.*;
@@ -14,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -148,8 +146,13 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
     }
 
     private void updateOrganizationRating(Organization organization) {
-        float rating = organizationRepository.getRating(organization.getId());
-        rating = (float) (Math.ceil(rating * 10) / 10);
+        float avgRating = organizationRepository.getRating(organization.getId());
+        float totalAvgRating = organizationRepository.getTotalAvgRating();
+        int count = organizationRepository.getCountReservation(organization.getId());
+        float threshold = organizationRepository.getThresholdValue();
+        float thresholdValue = (organizationRepository.getThresholdValue() > 5) ? threshold : 5;
+        float rating = (float) (avgRating * count + totalAvgRating * thresholdValue) / (count + thresholdValue);
+        System.out.println(" avhR = " + avgRating + " totalAvgR = " + totalAvgRating + " count = " + count + " threshold = " + thresholdValue + " rating = " + rating );
         organization.setRating(rating);
         organizationRepository.save(organization);
     }
@@ -163,6 +166,24 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
         }
         return ResponseEntity.ok(userRepository.findByReservations(reservation.get()));
     }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @Override
+    public ResponseEntity<Optional<Reservation>> checkReservation(Long id){
+        Optional<Reservation> reservation = reservationRepository.findById(id);
+         reservation = reservationRepository.checkReservation(reservation.get().getUser().getId(), reservation.get().getService().getId());
+        if (!reservation.isPresent()) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(reservation);
+    }
+
+    /*@Override
+    public ResponseEntity<List<VectorRating>> getAllRating() {
+        //System.out.println(reservationRepository.ratingAll());
+        System.out.println(reservationRepository.ratAll());
+        return ResponseEntity.ok(reservationRepository.ratAll());
+    }*/
 
     @PreAuthorize("hasAuthority('USER')")
     @Override

@@ -1,13 +1,15 @@
 package WebApp.repository;
 
-import WebApp.entity.Reservation;
-import WebApp.entity.Service;
-import WebApp.entity.User;
+import WebApp.entity.*;
 import WebApp.entity.enums.ReservationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import javax.swing.text.html.parser.Entity;
+import java.util.List;
+import java.util.Optional;
 
 public interface ReservationRepository extends CommonRepository<Reservation> {
     Page<Reservation> findByServiceAndStatus(Service service, ReservationStatus reservationStatus, Pageable pageable);
@@ -26,4 +28,24 @@ public interface ReservationRepository extends CommonRepository<Reservation> {
             nativeQuery = true)
     Integer getCountForOwnerOrganizationAndStatus(@Param("userId") Long userId,
                                                   @Param("status") String status);
+
+
+    @Query(value = "select * " +
+            "from reservation " +
+            "where user_id = :userId " +
+            "and service_id = :serviceId " +
+            "and rating != 0",
+            nativeQuery = true)
+    Optional<Reservation> checkReservation(@Param("userId") Long userId,
+                                           @Param("serviceId") Long serviceId);
+
+
+    @Query(value = "select * "
+            + "from reservation " +
+            "where rating != 0 " +
+            "order by user_id",
+            nativeQuery = true)
+    List<Reservation> ratingAll();
+
+
 }

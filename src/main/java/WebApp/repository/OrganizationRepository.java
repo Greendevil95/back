@@ -33,4 +33,29 @@ public interface OrganizationRepository extends CommonRepository<Organization> {
     Integer getCountReservationWithStatus(@Param("organizationId") Long organizationId,
                                           @Param("status") String status);
 
+    @Query(value = "select COUNT (r.rating) " +
+            "from reservation r " +
+            "inner join service s on s.id = r.service_id " +
+            "inner join organization o on s.organization_id = o.id " +
+            "where s.organization_id = :organizationId and r.rating > 0 ",
+            nativeQuery = true)
+    Integer getCountReservation(@Param("organizationId") Long organizationId);
+
+    @Query(value = "select AVG(r.rating) " +
+            "from reservation r " +
+            "where r.rating > 0",
+            nativeQuery = true)
+    Integer getTotalAvgRating();
+
+    @Query( value = "select AVG(r_count) " +
+            "from(select COUNT(r.rating) as r_count from reservation r " +
+            "inner join service s on s.id = r.service_id " +
+            "inner join organization o on s.organization_id = o.id " +
+            "where r.rating > 0 " +
+            "group by o.id) x",
+            nativeQuery = true  )
+    Float getThresholdValue();
+
+
+
 }
