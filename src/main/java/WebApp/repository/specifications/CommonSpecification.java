@@ -6,6 +6,7 @@ import WebApp.entity.enums.ReservationStatus;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
+import java.util.Arrays;
 
 public class CommonSpecification<E extends AbstractEntity> implements Specification<E> {
 
@@ -59,7 +60,6 @@ public class CommonSpecification<E extends AbstractEntity> implements Specificat
         for (String field : fieldNames) {
             path = path.get(field);
         }
-
         return path;
     }
 

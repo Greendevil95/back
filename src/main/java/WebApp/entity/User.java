@@ -70,6 +70,16 @@ public class User extends AbstractEntity {
         this.roles = roles;
     }
 
+    public User(String name, String password, String email, String phone, boolean vip, State states, Set<Role> roles) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.phone = phone;
+        this.vip = vip;
+        this.states = states;
+        this.roles = roles;
+    }
+
     public String getEmail() {
         return email;
     }

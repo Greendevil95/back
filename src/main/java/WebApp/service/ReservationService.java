@@ -3,7 +3,6 @@ package WebApp.service;
 import WebApp.entity.AbstractEntity;
 import WebApp.entity.Reservation;
 import WebApp.entity.User;
-import WebApp.entity.VectorRating;
 import WebApp.entity.enums.ReservationStatus;
 import WebApp.entity.response.EntityResponse;
 import org.springframework.http.ResponseEntity;

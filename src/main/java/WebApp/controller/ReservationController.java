@@ -3,7 +3,6 @@ package WebApp.controller;
 import WebApp.entity.Reservation;
 import WebApp.entity.Service;
 import WebApp.entity.User;
-import WebApp.entity.VectorRating;
 import WebApp.entity.enums.ReservationStatus;
 import WebApp.service.ReservationService;
 import WebApp.service.ReservationServiceImpl;

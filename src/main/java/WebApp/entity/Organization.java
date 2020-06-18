@@ -19,7 +19,7 @@ public class Organization extends AbstractEntity {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 1020)
     private String description;
 
     @Column(name = "rating")

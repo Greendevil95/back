@@ -84,14 +84,15 @@ public class UserController extends AbstractController<User, UserServiceImpl> {
                                                                                       @RequestParam(value = "field", required = false) String fieldForSort,
                                                                                       @RequestParam(value = "search", required = false) String search) {
 
-        Iterable<Interest> interests = userService.get3InterestsForUserById(id);
+       Iterable<Interest> interests = userService.get3InterestsForUserById(id);
 
-        for (Interest i : interests) {
+        /*for (Interest i : interests) {
             search = search == null ? "category:" + i.getCategory().toString().toLowerCase() : search + ",orcategory:" + i.getCategory().toString().toLowerCase();
 
         }
 
-        return serviceService.getAll(page, pageSize, fieldForSort, search);
+        return serviceService.getAll(page, pageSize, fieldForSort, search);*/
+        return serviceService.getListRecommendations(id,page, pageSize, fieldForSort, search);
     }
 
 

@@ -15,7 +15,7 @@ public class Service extends AbstractEntity {
     @Column(name = "price")
     private Float price;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 1020)
     private String description;
 
     @Column(name = "time")
@@ -125,5 +125,19 @@ public class Service extends AbstractEntity {
 
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
+    }
+
+    @Override
+    public String toString() {
+        return "Service{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                ", description='" + description + '\'' +
+                ", time=" + time +
+                ", rating=" + rating +
+                ", organization=" + organization +
+                ", reservations=" + reservations +
+                ", category=" + category +
+                '}';
     }
 }

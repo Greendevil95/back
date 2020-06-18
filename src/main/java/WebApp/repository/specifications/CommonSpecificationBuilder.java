@@ -15,7 +15,7 @@ public class CommonSpecificationBuilder<E extends AbstractEntity> {
         params = new ArrayList<SearchCriteria>();
     }
 
-    public CommonSpecificationBuilder with(String connect, String key, String operation, Object value) {
+    public CommonSpecificationBuilder add(String connect, String key, String operation, Object value) {
         params.add(new SearchCriteria(connect, key, operation, value));
         return this;
     }

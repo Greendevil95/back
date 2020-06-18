@@ -1,6 +1,7 @@
 package WebApp.service;
 
 import WebApp.entity.*;
+import WebApp.entity.enums.Event;
 import WebApp.entity.enums.ReservationStatus;
 import WebApp.entity.response.EntityResponse;
 import WebApp.repository.*;
@@ -54,7 +55,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
         reservation.setStatus(ReservationStatus.INPROCESS);
         reservationRepository.save(reservation);
 
-        return ResponseEntity.ok("User with username " + authUserName + " reserved to service with id =  " + reservation.getService().getId());
+        return ResponseEntity.ok("User add username " + authUserName + " reserved to service add id =  " + reservation.getService().getId());
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -88,11 +89,11 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
     public ResponseEntity update(Reservation reservation) {
         Optional<Reservation> updateReservation = reservationRepository.findById(reservation.getId());
         if (!updateReservation.isPresent()) {
-            return ResponseEntity.badRequest().body("Reservation with id " + updateReservation.get().getId() + " not found.");
+            return ResponseEntity.badRequest().body("Reservation add id " + updateReservation.get().getId() + " not found.");
         }
 
         if (!isAuthUser(updateReservation.get().getUser())) {
-            return ResponseEntity.badRequest().body("Reservation with id " + updateReservation.get().getId() + " not found.");
+            return ResponseEntity.badRequest().body("Reservation add id " + updateReservation.get().getId() + " not found.");
         }
         reservation.setUser(updateReservation.get().getUser());
         reservation.setService(updateReservation.get().getService());
@@ -106,7 +107,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
 
         updateServiceRating(reservation.getService());
         updateOrganizationRating(reservation.getService().getOrganization());
-        return ResponseEntity.ok("Reservation with id " + reservation.getId() + " was update");
+        return ResponseEntity.ok("Reservation add id " + reservation.getId() + " was update");
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -121,13 +122,13 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
     public ResponseEntity delete(Reservation reservation) {
         Optional<Reservation> deleteReservation = reservationRepository.findById(reservation.getId());
         if (!deleteReservation.isPresent()) {
-            return ResponseEntity.badRequest().body("Reservatiom with id " + deleteReservation.get().getId() + " not found.");
+            return ResponseEntity.badRequest().body("Reservatiom add id " + deleteReservation.get().getId() + " not found.");
         }
         if (!isAuthUser(deleteReservation.get().getUser())) {
             return ResponseEntity.badRequest().body("Its not you reservation.");
         }
         reservationRepository.deleteById(reservation.getId());
-        return ResponseEntity.ok("Organization with id " + reservation.getId() + "was delete.");
+        return ResponseEntity.ok("Organization add id " + reservation.getId() + "was delete.");
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -178,12 +179,6 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
         return ResponseEntity.ok(reservation);
     }
 
-    /*@Override
-    public ResponseEntity<List<VectorRating>> getAllRating() {
-        //System.out.println(reservationRepository.ratingAll());
-        System.out.println(reservationRepository.ratAll());
-        return ResponseEntity.ok(reservationRepository.ratAll());
-    }*/
 
     @PreAuthorize("hasAuthority('USER')")
     @Override
@@ -205,8 +200,6 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
         if (!thisReservation.isPresent()) {
             return ResponseEntity.badRequest().body("Reservation with id " + id + " not found.");
         }
-
-
         Organization organization = thisReservation.get().getService().getOrganization();
         if (!isAuthUser(thisReservation.get().getUser()) && !isAuthUser(thisReservation.get().getService().getOrganization().getUser())) {
             return ResponseEntity.badRequest().body("Its reservation not for you. ");
@@ -264,6 +257,7 @@ public class ReservationServiceImpl extends AbstractService<Reservation, Reserva
         } else {
             Interest newInteres = new Interest();
             newInteres.setUser(reservation.getUser());
+            newInteres.setEvent(Event.RATING);
             newInteres.setCategory(reservation.getService().getCategory());
             newInteres.setCount(1);
             interestRepository.save(newInteres);

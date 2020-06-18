@@ -13,7 +13,6 @@ public class SearchCriteria {
         this.operation = operation;
         this.value = value;
     }
-
     public String getKey() {
         return key;
     }
@@ -44,6 +43,16 @@ public class SearchCriteria {
 
     public void setConnect(String connect) {
         this.connect = connect;
+    }
+
+    @Override
+    public String toString() {
+        return "SearchCriteria{" +
+                "connect='" + connect + '\'' +
+                ", key='" + key + '\'' +
+                ", operation='" + operation + '\'' +
+                ", value=" + value +
+                '}';
     }
 }
 

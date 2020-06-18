@@ -43,7 +43,7 @@ public class ReportServiceImpl extends AbstractService<Report, ReportRepository>
 
         Optional<WebApp.entity.Service> service = serviceRepository.findById(report.getService().getId());
         if (!service.isPresent()) {
-            return ResponseEntity.badRequest().body("Service with id " + report.getService().getId() + " not found.");
+            return ResponseEntity.badRequest().body("Service add id " + report.getService().getId() + " not found.");
         }
         report.setService(service.get());
         report.setStatus(false);
@@ -63,7 +63,7 @@ public class ReportServiceImpl extends AbstractService<Report, ReportRepository>
 
         Optional<Report> updateReport = reportRepository.findById(id);
         if (!updateReport.isPresent()) {
-            return ResponseEntity.badRequest().body("Report with id + " + id + " not found.");
+            return ResponseEntity.badRequest().body("Report add id + " + id + " not found.");
         }
 
         String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -75,13 +75,13 @@ public class ReportServiceImpl extends AbstractService<Report, ReportRepository>
 
         Optional<WebApp.entity.Service> service = serviceRepository.findById(report.getService().getId());
         if (!service.isPresent()) {
-            return ResponseEntity.badRequest().body("Service with id " + report.getService().getId() + " not found.");
+            return ResponseEntity.badRequest().body("Service add id " + report.getService().getId() + " not found.");
         }
 
         updateReport.get().setDescription(report.getDescription());
         updateReport.get().setService(service.get());
         reportRepository.save(updateReport.get());
-        return ResponseEntity.ok("Report with id " + id + " was update.");
+        return ResponseEntity.ok("Report add id " + id + " was update.");
     }
 
     @PreAuthorize("hasAuthority('USER') OR hasAuthority('ADMIN')")
@@ -90,7 +90,7 @@ public class ReportServiceImpl extends AbstractService<Report, ReportRepository>
 
         Optional<Report> deleteReport = reportRepository.findById(report.getId());
         if (!deleteReport.isPresent()) {
-            return ResponseEntity.badRequest().body("Report with id + " + report.getId() + " not found.");
+            return ResponseEntity.badRequest().body("Report add id + " + report.getId() + " not found.");
         }
 
         if (!isAuthUser(deleteReport.get().getUser())) {
@@ -98,18 +98,18 @@ public class ReportServiceImpl extends AbstractService<Report, ReportRepository>
         }
 
         reportRepository.delete(report);
-        return ResponseEntity.ok("Report with id " + report.getId() + " was delete.");
+        return ResponseEntity.ok("Report add id " + report.getId() + " was delete.");
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity setStatusById(Long id, Boolean status) {
         Optional<Report> report = reportRepository.findById(id);
         if (!report.isPresent()) {
-            return ResponseEntity.badRequest().body("Report with id " + id + " not found.");
+            return ResponseEntity.badRequest().body("Report add id " + id + " not found.");
         }
         report.get().setStatus(status);
         reportRepository.save(report.get());
-        return ResponseEntity.ok().body("Status for report with id " + id + " was changed.");
+        return ResponseEntity.ok().body("Status for report add id " + id + " was changed.");
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

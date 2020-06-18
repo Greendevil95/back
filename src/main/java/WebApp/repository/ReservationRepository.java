@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReservationRepository extends CommonRepository<Reservation> {
+
     Page<Reservation> findByServiceAndStatus(Service service, ReservationStatus reservationStatus, Pageable pageable);
 
     Integer countByServiceAndStatus(Service service, ReservationStatus reservationStatus);
@@ -42,10 +43,18 @@ public interface ReservationRepository extends CommonRepository<Reservation> {
 
     @Query(value = "select * "
             + "from reservation " +
-            "where rating != 0 " +
+            "where rating > 0 " +
             "order by user_id",
             nativeQuery = true)
-    List<Reservation> ratingAll();
+    List<Reservation> findAllWithRating();
+
+
+    @Query(value = "Select COUNT(r.*) " +
+            "from reservation r " +
+            "where r.user_id = :userId " +
+            "and r.rating > 0",
+            nativeQuery = true)
+    Integer findUserRaitingCount(@Param("userId") long userId);
 
 
 }

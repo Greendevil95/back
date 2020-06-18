@@ -51,7 +51,7 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
 
         organization.setRating((float) 0);
         organizationRepository.save(organization);
-        return ResponseEntity.ok("Organization with name " + organization.getName() + " added for user with id " + ((User) optionalAuthUser.get()).getId());
+        return ResponseEntity.ok("Organization add name " + organization.getName() + " added for user add id " + ((User) optionalAuthUser.get()).getId());
     }
 
     public ResponseEntity<EntityResponse<Organization>> getAllOrganizations(Integer page, Integer pageSize, String fieldForSort, String search) {
@@ -80,7 +80,7 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
         organization.setUser(userRepository.findByEmail(authUserName).get());
         organization.setId(id);
         organizationRepository.save(organization);
-        return ResponseEntity.ok("Organization with id " + organization.getId() + " and name " + organization.getName() + " was update.");
+        return ResponseEntity.ok("Organization add id " + organization.getId() + " and name " + organization.getName() + " was update.");
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -104,7 +104,7 @@ public class OrganizationServiceImpl extends AbstractService<Organization, Organ
             return ResponseEntity.badRequest().body("Organization with id " + organizationId + " have service. ");
         }
         organizationRepository.deleteById(organizationId);
-        return ResponseEntity.ok("Organization with id " + organizationId + "was delete.");
+        return ResponseEntity.ok("Organization add id " + organizationId + "was delete.");
     }
 
     @PreAuthorize("hasAuthority('USER')")

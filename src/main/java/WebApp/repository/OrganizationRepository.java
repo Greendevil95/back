@@ -56,6 +56,4 @@ public interface OrganizationRepository extends CommonRepository<Organization> {
             nativeQuery = true  )
     Float getThresholdValue();
 
-
-
 }

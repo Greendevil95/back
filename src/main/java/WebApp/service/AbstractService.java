@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -23,8 +24,9 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractService<E extends AbstractEntity, R extends CommonRepository<E>> implements CommonService<E> {
 
-    private static int constPageSize = 3;
+    private static int constPageSize = 4;
     protected final R repository;
+
     @Autowired
     UserRepository userRepository;
 
@@ -91,10 +93,9 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
 
         Matcher matcher = pattern.matcher("and" + search + ",");
         while (matcher.find()) {
-            builder.with(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4));
+            builder.add(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4));
         }
-        Specification<E> specification = builder.build();
-        return specification;
+        return builder.build();
     }
 
     protected Pageable initPageable(Integer page, String fieldForSort, Integer pageSize) {

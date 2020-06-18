@@ -1,6 +1,7 @@
 package WebApp.entity;
 
 import WebApp.entity.enums.Category;
+import WebApp.entity.enums.Event;
 
 import javax.persistence.*;
 
@@ -20,13 +21,19 @@ public class Interest extends AbstractEntity {
     private User user;
 
 
+    @Column(name = "event")
+    @Enumerated(EnumType.STRING)
+    private Event event;
+
+
     public Interest() {
     }
 
-    public Interest(Category category, Integer count, User user) {
+    public Interest(Category category, Integer count, User user, Event event) {
         this.category = category;
         this.count = count;
         this.user = user;
+        this.event = event;
     }
 
     public User getUser() {
@@ -51,5 +58,13 @@ public class Interest extends AbstractEntity {
 
     public void setCount(Integer count) {
         this.count = count;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public Event getEvent() {
+        return event;
     }
 }

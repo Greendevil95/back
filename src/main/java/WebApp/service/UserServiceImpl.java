@@ -16,10 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UserServiceImpl extends AbstractService<User, UserRepository> implements UserService {
@@ -73,8 +70,6 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     public ResponseEntity add(User user) {
         if (!userRepository.findByEmail(user.getEmail()).isPresent()) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-
             user.setRoles(Collections.singleton(Role.USER));
             if (user.getEmail().equals("denisadmin@mail.ru")) {
                 Set<Role> roles = new HashSet<>();
@@ -85,21 +80,20 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
             user.setStates(State.ACTIVE);
             user.setVip(false);
             userRepository.save(user);
-            return ResponseEntity.ok("Registration user with email " + user.getEmail() + " successful!");
-        } else return ResponseEntity.badRequest().body("User with email: " + user.getEmail() + " already exists!");
+            return ResponseEntity.ok("Registration user add email " + user.getEmail() + " successful!");
+        } else return ResponseEntity.badRequest().body("User add email: " + user.getEmail() + " already exists!");
     }
+
 
     @PreAuthorize("hasAuthority('USER')")
     @Override
     public ResponseEntity updateById(Long id, User user) {
         if (id == null) {
-//            String authUserName = SecurityContextHolder.getContext().getAuthentication().getName();
-//            id = userRepository.findByEmail(authUserName).get().getId();
             return ResponseEntity.badRequest().body("Id is null.");
         }
         Optional<User> updateUser = userRepository.findById(id);
         if (!updateUser.isPresent()) {
-            return ResponseEntity.badRequest().body("User with id " + id + " not found");
+            return ResponseEntity.badRequest().body("User add id " + id + " not found");
         }
         if (!isAuthUser(updateUser.get())) {
             ResponseEntity.badRequest().body("Its not you account.");
@@ -121,7 +115,7 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         user.setStates(updateUser.get().getStates());
         user.setRoles(updateUser.get().getRoles());
         userRepository.save(user);
-        return ResponseEntity.ok("Data for user with email " + user.getEmail() + " was refreshing!");
+        return ResponseEntity.ok("Data for user add email " + user.getEmail() + " was refreshing!");
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -137,7 +131,7 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
         if (deleteUser.isPresent()) {
             return deleteById(deleteUser.get().getId());
         } else
-            return ResponseEntity.badRequest().body("User with email: " + deleteUser.get().getEmail() + " not found");
+            return ResponseEntity.badRequest().body("User add email: " + deleteUser.get().getEmail() + " not found");
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -145,18 +139,14 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
     public ResponseEntity deleteById(Long id) {
         Optional<User> deleteUser = userRepository.findById(id);
         if (!deleteUser.isPresent()) {
-            return ResponseEntity.badRequest().body("User with email: " + deleteUser.get().getEmail() + " not found");
+            return ResponseEntity.badRequest().body("User add email: " + deleteUser.get().getEmail() + " not found");
         }
         if (!isAuthUser(deleteUser.get())) {
             return ResponseEntity.badRequest().body("Its not you account.");
         }
         userRepository.deleteById(id);
 
-//        deleteUser.get().setStates(Collections.singleton(State.DELETE));
-//        deleteUser.get().setOrganization(null);
-//        deleteUser.get().setReservations(null);
-//        userRepository.save(deleteUser.get());
-        return ResponseEntity.ok("User with email " + deleteUser.get().getEmail() + " was delete.");
+        return ResponseEntity.ok("User add email " + deleteUser.get().getEmail() + " was delete.");
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -166,14 +156,14 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
 
         authUser.setVip(true);
         userRepository.save(authUser);
-        return ResponseEntity.ok("User with id " + authUser.getId() + " is vip. ");
+        return ResponseEntity.ok("User add id " + authUser.getId() + " is vip. ");
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity setState(Long id, String state) {
         Optional<User> user = userRepository.findById(id);
         if (!user.isPresent()) {
-            return ResponseEntity.badRequest().body("User with id " + id + " not found.");
+            return ResponseEntity.badRequest().body("User add id " + id + " not found.");
         }
         user.get().setStates(State.get(state));
 
@@ -187,8 +177,7 @@ public class UserServiceImpl extends AbstractService<User, UserRepository> imple
             }
         }
         userRepository.save(user.get());
-        return ResponseEntity.ok("User with id " + id + " changed state. ");
+        return ResponseEntity.ok("User add id " + id + " changed state. ");
     }
-
 
 }
